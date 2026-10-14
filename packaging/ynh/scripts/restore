@@ -1,0 +1,18 @@
+#!/bin/bash
+source ../settings/scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+ynh_restore "$install_dir"
+ynh_restore "$data_dir"
+chown -R "$app:$app" "$data_dir"
+ynh_psql_db_shell "$db_name" < ./db.sql
+matos_dependencies
+ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore "/etc/systemd/system/$app.service"
+ynh_restore "/etc/systemd/system/$app-jobs.service"
+ynh_restore "/etc/systemd/system/$app-jobs.timer"
+systemctl daemon-reload
+yunohost service add "$app" --description="ARCenal Matos" --log="/var/log/$app/$app.log"
+ynh_systemctl --service="$app" --action=start
+systemctl enable --now "$app-jobs.timer"
+ynh_systemctl --service=nginx --action=reload

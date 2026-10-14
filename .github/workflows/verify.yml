@@ -1,0 +1,44 @@
+name: Verify Matos preview
+on:
+  push:
+    branches: [preview]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: arcenal_matos
+          POSTGRES_PASSWORD: ci-only-password
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: ci-only-password
+      PGDATABASE: arcenal_matos
+      MATOS_DEBUG: '1'
+      MATOS_DEV_LOGIN: '1'
+      PLAYWRIGHT_BROWSERS_PATH: .local/playwright
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
+      - run: npm ci && npm run build
+      - run: .venv/bin/ruff check . && .venv/bin/python -m compileall -q core matos scripts
+      - run: .venv/bin/python manage.py check && .venv/bin/python manage.py makemigrations --check --dry-run
+      - run: .venv/bin/python manage.py test core.tests --noinput
+      - run: mkdir -p .local && npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - run: .venv/bin/python scripts/build_beta.py && .venv/bin/python scripts/verify_artifacts.py

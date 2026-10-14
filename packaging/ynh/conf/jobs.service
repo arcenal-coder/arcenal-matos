@@ -1,0 +1,15 @@
+[Unit]
+Description=ARCenal Matos — rappels et e-mails
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=__APP__
+Group=__APP__
+WorkingDirectory=__INSTALL_DIR__
+EnvironmentFile=__INSTALL_DIR__/.env
+ExecStart=__INSTALL_DIR__/.venv/bin/python manage.py sync_users
+ExecStart=__INSTALL_DIR__/.venv/bin/python manage.py run_jobs
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0077

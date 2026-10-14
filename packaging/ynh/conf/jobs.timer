@@ -1,0 +1,11 @@
+[Unit]
+Description=ARCenal Matos — travaux périodiques
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=__APP__-jobs.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

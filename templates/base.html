@@ -1,0 +1,59 @@
+{% load static %}<!doctype html>
+<html lang="fr" data-theme="system">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ARCenal Matos{% endblock %}</title>
+  <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+  <script src="{% static 'theme.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'app.css' %}">
+  <link rel="stylesheet" href="{% static 'accessibility.css' %}">
+</head>
+<body>
+<a class="skip-link" href="#main-content">Aller au contenu</a>
+<aside class="sidebar">
+  <div class="brand-row">
+    <a class="brand {% if has_company_logo and user.is_authenticated %}with-company-logo{% endif %}" href="{% url 'dashboard' %}">{% if has_company_logo and user.is_authenticated %}<img class="company-logo" src="{% url 'company-logo' %}" alt="Logo de la société">{% else %}<span class="logo" aria-hidden="true">A</span>{% endif %}<span>ARCenal <strong>Matos</strong><small>Gestion des actifs</small></span></a>
+    {% if user.is_authenticated %}<button id="nav-toggle" class="nav-toggle secondary" type="button" aria-expanded="false" aria-controls="main-navigation">Menu</button>{% endif %}
+  </div>
+  {% if user.is_authenticated %}
+  <nav id="main-navigation" aria-label="Navigation principale">
+    <a href="{% url 'dashboard' %}" {% if active_navigation == 'dashboard' %}aria-current="page"{% endif %}><span aria-hidden="true">◈</span> Tableau de bord</a>
+    <a href="{% url 'inventory' %}" {% if active_navigation == 'inventory' %}aria-current="page"{% endif %}><span aria-hidden="true">▣</span> Inventaire</a>
+    <a href="{% url 'reservations' %}" {% if active_navigation == 'reservations' %}aria-current="page"{% endif %}><span aria-hidden="true">⇄</span> Demandes & prêts</a>
+    <a href="{% url 'scan' %}" {% if active_navigation == 'scan' %}aria-current="page"{% endif %}><span aria-hidden="true">⌗</span> Scanner</a>
+    {% if is_staff_profile %}
+    <div class="navlabel">Logistique</div>
+    <a href="{% url 'transfers' %}" {% if active_navigation == 'transfers' %}aria-current="page"{% endif %}><span aria-hidden="true">↗</span> Transferts</a>
+    <a href="{% url 'maintenance' %}" {% if active_navigation == 'maintenance' %}aria-current="page"{% endif %}><span aria-hidden="true">⚙</span> Maintenance & contrôles</a>
+    <a href="{% url 'suppliers' %}" {% if active_navigation == 'suppliers' %}aria-current="page"{% endif %}><span aria-hidden="true">◇</span> Fournisseurs</a>
+    <a href="{% url 'licenses' %}" {% if active_navigation == 'licenses' %}aria-current="page"{% endif %}><span aria-hidden="true">▤</span> Logiciels & licences</a>
+    <a href="{% url 'reports' %}" {% if active_navigation == 'reports' %}aria-current="page"{% endif %}><span aria-hidden="true">▥</span> Rapports & audits</a>
+    <a href="{% url 'import' %}" {% if active_navigation == 'import' %}aria-current="page"{% endif %}><span aria-hidden="true">↓</span> Import CSV</a>
+    <a href="{% url 'journal' %}" {% if active_navigation == 'journal' %}aria-current="page"{% endif %}><span aria-hidden="true">◷</span> Journal des actions</a>
+    {% endif %}
+    <a href="{% url 'notifications' %}" {% if active_navigation == 'notifications' %}aria-current="page"{% endif %}><span aria-hidden="true">◉</span> Notifications {% if unread %}<span class="badge">{{ unread }}</span>{% endif %}</a>
+    {% if is_admin_profile %}
+    <div class="navlabel">Administration</div>
+    <a href="{% url 'settings' %}" {% if active_navigation == 'settings' %}aria-current="page"{% endif %}><span aria-hidden="true">⚑</span> Organisation & profils</a>
+    <a href="{% url 'integration' %}" {% if active_navigation == 'integration' %}aria-current="page"{% endif %}><span aria-hidden="true">✧</span> Agent & MCP</a>
+    {% endif %}
+  </nav>
+  <div class="sidefoot"><span class="dot" aria-hidden="true"></span> {{ release_label }} · auto-hébergée</div>
+  {% endif %}
+</aside>
+<div class="workspace">
+  <header class="topbar">
+    <span class="tagline">Votre matériel, au bon endroit.</span>
+    <div class="header-tools">
+      <div class="theme-control"><label for="theme-choice">Apparence</label><select id="theme-choice"><option value="system">Système</option><option value="light">Clair</option><option value="dark">Sombre</option></select></div>
+      <div class="identity">{% if user.is_authenticated %}<span>{{ user }}<small>{{ user.get_role_display }}</small></span><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="ghost" type="submit">Déconnexion</button></form>{% else %}<span class="badge">{{ release_label }}</span>{% endif %}</div>
+    </div>
+  </header>
+  <main id="main-content" tabindex="-1">
+    {% for message in messages %}<div role="status" class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer><span>ARCenal Matos · {{ app_version }} · Vos données restent sur votre serveur.</span><span class="arcenal-signature">Par ARCenal</span></footer>
+</div>
+{% block scripts %}{% endblock %}
+</body></html>

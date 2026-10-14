@@ -1,0 +1,54 @@
+packaging_format = 2
+id = "arcenal-matos"
+name = "ARCenal Matos"
+description.en = "Internal multisite asset management with a logistics MCP server"
+description.fr = "Gestion interne multisite des actifs avec serveur MCP logisticien"
+version = "0.1.0~ynh1"
+maintainers = ["arcenal-coder"]
+
+[upstream]
+license = "LicenseRef-Proprietary"
+license_url = "https://github.com/arcenal-coder/arcenal-matos/blob/preview/LICENSE"
+code = "https://github.com/arcenal-coder/arcenal-matos"
+
+[integration]
+yunohost = ">= 12.1.17"
+helpers_version = "2.1"
+architectures = ["amd64", "arm64"]
+multi_instance = false
+ldap = true
+sso = true
+disk = "500M"
+ram.build = "500M"
+ram.runtime = "500M"
+
+[install]
+  [install.domain]
+  type = "domain"
+  [install.init_main_permission]
+  type = "group"
+  default = "all_users"
+  [install.admin]
+  type = "user"
+
+[resources]
+  [resources.sources.main]
+  url = "__SOURCE_URL__"
+  sha256 = "__SOURCE_SHA256__"
+  in_subdir = true
+  [resources.system_user]
+  allow_email = true
+  [resources.install_dir]
+  [resources.data_dir]
+  [resources.apt]
+  packages = ["python3-venv", "python3-pip", "postgresql"]
+  [resources.database]
+  type = "postgresql"
+  [resources.permissions]
+  main.url = "/"
+  main.protected = true
+  mcp.url = "/mcp"
+  mcp.allowed = "visitors"
+  mcp.show_tile = false
+  mcp.auth_header = false
+  mcp.protected = true

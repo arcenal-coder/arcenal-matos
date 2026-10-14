@@ -1,0 +1,11 @@
+{
+  "name": "arcenal-matos",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild frontend/scan.js --bundle --minify --legal-comments=external --outfile=static/scan.bundle.js && python3 scripts/vendor_notices.py",
+    "test:browser": "PLAYWRIGHT_BROWSERS_PATH=.local/playwright playwright test"
+  },
+  "dependencies": {"@zxing/browser": "0.1.5", "@fontsource/inter": "5.3.0"},
+  "devDependencies": {"esbuild": "0.25.12", "@playwright/test": "1.64.0", "@axe-core/playwright": "4.13.0"}
+}

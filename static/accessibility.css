@@ -1,0 +1,16 @@
+/* Every interactive element uses the same Gratitude focus token. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--arc-focus);
+  outline-offset: 3px;
+}
+.skip-link { position: fixed; top: -100px; left: 16px; z-index: 10; }
+.skip-link:focus { top: 16px; padding: 12px 20px; background: var(--arc-surface); color: var(--arc-text); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+@media print {
+  .sidebar, .topbar, .actions, footer, .skip-link { display: none; }
+  .workspace { margin-left: 0; }
+  main { padding: 0; }
+  .card { box-shadow: none; break-inside: avoid; }
+}

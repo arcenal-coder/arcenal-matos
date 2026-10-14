@@ -1,0 +1,64 @@
+import io
+import json
+import tempfile
+from contextlib import contextmanager
+from unittest.mock import patch
+
+from django.test import TestCase, override_settings
+from PIL import Image
+
+from core import branding
+from core.models import User
+
+
+class BrandingTests(TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.override = override_settings(MEDIA_ROOT=self.directory.name, YNH_PORTAL_URL="https://portal.example.invalid",
+                                          DEBUG=True, DEV_LOGIN=True)
+        self.override.enable()
+        self.addCleanup(self.override.disable)
+        self.addCleanup(self.directory.cleanup)
+        self.user = User.objects.create(username="branding-admin", role="admin")
+
+    def response(self, request, timeout):
+        @contextmanager
+        def context():
+            if request.full_url.endswith("/public"):
+                data = json.dumps({"portal_logo": "company.png", "portal_title": "Entreprise"}).encode()
+            else:
+                buffer = io.BytesIO()
+                Image.new("RGBA", (120, 50), "white").save(buffer, "PNG")
+                data = buffer.getvalue()
+            response = io.BytesIO(data)
+            response.url = request.full_url
+            yield response
+        return context()
+
+    def test_logo_cache_and_signature_on_pages(self):
+        with patch("core.branding.urlopen", side_effect=self.response) as opener:
+            self.assertTrue(branding.refresh(force=True))
+            self.assertTrue(branding.refresh())
+            self.assertEqual(opener.call_count, 2)
+        self.client.force_login(self.user, backend="core.auth.DisabledPasswordBackend")
+        for path in ("/", "/inventory/", "/integration/", "/settings/"):
+            response = self.client.get(path)
+            self.assertContains(response, 'alt="Logo de la société"')
+            self.assertContains(response, "Par ARCenal")
+        logo = self.client.get("/branding/logo/")
+        self.assertEqual(logo.status_code, 200)
+        self.assertTrue(b"".join(logo.streaming_content).startswith(b"\x89PNG"))
+
+    def test_portal_failure_keeps_existing_logo(self):
+        with patch("core.branding.urlopen", side_effect=self.response):
+            branding.refresh(force=True)
+        before = (branding.directory() / "logo.png").read_bytes()
+        with patch("core.branding.urlopen", side_effect=OSError("Unavailable")):
+            with self.assertRaises(OSError):
+                branding.refresh(force=True)
+        self.assertEqual(before, (branding.directory() / "logo.png").read_bytes())
+
+    def test_invalid_portal_origin_refused(self):
+        with override_settings(YNH_PORTAL_URL="http://portal.example.invalid"):
+            with self.assertRaises(ValueError):
+                branding.refresh(force=True)

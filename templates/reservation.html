@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% block content %}
+<div class="pagehead"><div><span class="eyebrow">DEMANDE #{{ item.pk }}</span><h1>{{ item.asset.name }}</h1><p>{{ item.borrower }} · {{ item.start }} → {{ item.end }}</p></div><span class="pill status-{{ item.status }}">{{ item.get_status_display }}</span></div>
+<section class="card"><p>{{ item.reason|linebreaksbr }}</p>{% if item.approved_by %}<p>Traité par <strong>{{ item.approved_by }}</strong> le {{ item.approved_at }}.</p>{% endif %}
+<div class="actions">
+{% if item.status == 'pending' and is_manager %}
+<form method="post" action="{% url 'action' 'approve' item.pk %}">{% csrf_token %}<button>Valider le prêt</button></form>
+<form method="post" action="{% url 'action' 'reject' item.pk %}" data-confirm="Refuser cette demande empêchera sa sortie de matériel. Confirmez-vous le refus ?">{% csrf_token %}<button class="secondary">Refuser</button></form>
+{% endif %}
+{% if item.status == 'approved' and is_staff_profile %}<a class="button" href="{% url 'movement' item.pk 'checkout' %}">Enregistrer la sortie</a>{% endif %}
+{% if item.status == 'out' and is_staff_profile %}<a class="button" href="{% url 'movement' item.pk 'return' %}">Enregistrer le retour</a>{% endif %}
+{% if item.status == 'pending' or item.status == 'approved' %}{% if is_manager or item.borrower_id == user.pk %}
+<form method="post" action="{% url 'action' 'cancel' item.pk %}" data-confirm="Cette réservation sera annulée. Une nouvelle demande sera nécessaire pour emprunter le matériel. Confirmez-vous ?">{% csrf_token %}<button class="secondary">Annuler</button></form>
+{% endif %}{% endif %}<a href="{% url 'asset' item.asset.pk %}">Fiche matériel →</a>
+</div></section>
+{% if loan %}<section class="card"><h2>État et mouvements</h2><dl><dt>Sortie</dt><dd>{{ loan.checked_out_at }} · {{ loan.checked_out_by }}</dd><dt>État à la sortie</dt><dd>{{ loan.checkout_condition }}</dd><dt>Retour</dt><dd>{{ loan.returned_at|default:'En attente' }} · {{ loan.returned_by|default:'' }}</dd><dt>État au retour</dt><dd>{{ loan.return_condition|default:'—' }}</dd><dt>Commentaire</dt><dd>{{ loan.comment|linebreaksbr }}</dd></dl></section>{% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("branding/logo/", views.company_logo, name="company-logo"),
+    path("", views.dashboard, name="dashboard"), path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"), path("inventory/", views.inventory, name="inventory"),
+    path("assets/new/", views.asset_edit, name="asset-new"), path("assets/<uuid:pk>/", views.asset_detail, name="asset"),
+    path("assets/<uuid:pk>/edit/", views.asset_edit, name="asset-edit"), path("assets/<uuid:pk>/reserve/", views.reserve_view, name="reserve"),
+    path("assets/<uuid:pk>/assign/", views.assign, name="assign"), path("assets/<uuid:pk>/transfer/", views.transfer_create, name="transfer-create"),
+    path("assets/<uuid:pk>/maintenance/", views.maintenance_create, name="maintenance-create"),
+    path("assets/<uuid:pk>/supplier-request/", views.supplier_request_create, name="supplier-request-create"),
+    path("assets/<uuid:pk>/upload/", views.upload_document, name="upload"),
+    path("assets/<uuid:pk>/labels/<str:kind>/", views.label, name="label"),
+    path("reservations/", views.reservations, name="reservations"), path("reservations/<int:pk>/", views.reservation_detail, name="reservation"),
+    path("reservations/<int:pk>/<str:action>/", views.movement, name="movement"),
+    path("actions/<str:kind>/<str:pk>/", views.action, name="action"),
+    path("transfers/", views.transfers, name="transfers"), path("maintenance/", views.maintenance, name="maintenance"),
+    path("suppliers/", views.suppliers, name="suppliers"), path("licenses/", views.licenses, name="licenses"),
+    path("licenses/new/", views.license_edit, name="license-new"), path("licenses/<int:pk>/edit/", views.license_edit, name="license-edit"),
+    path("licenses/<int:pk>/allocate/", views.license_allocate, name="license-allocate"),
+    path("settings/", views.settings_view, name="settings"), path("setup/<str:kind>/", views.setup, name="setup-new"),
+    path("setup/<str:kind>/<int:pk>/", views.setup, name="setup-edit"),
+    path("import/", views.csv_import, name="import"), path("reports/", views.reports, name="reports"),
+    path("documents/<uuid:pk>/", views.download_document, name="document"), path("scan/", views.scan, name="scan"),
+    path("notifications/", views.notifications, name="notifications"), path("journal/", views.journal, name="journal"),
+    path("integration/", views.integration, name="integration"),
+]
