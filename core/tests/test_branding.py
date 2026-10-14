@@ -3,7 +3,9 @@ import json
 import tempfile
 from contextlib import contextmanager
 from unittest.mock import patch
+from urllib.error import URLError
 
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from PIL import Image
 
@@ -62,3 +64,10 @@ class BrandingTests(TestCase):
         with override_settings(YNH_PORTAL_URL="http://portal.example.invalid"):
             with self.assertRaises(ValueError):
                 branding.refresh(force=True)
+
+    def test_refresh_command_handles_untrusted_certificate_without_traceback(self):
+        output = io.StringIO()
+        with patch("core.branding.urlopen", side_effect=URLError("certificate verify failed")):
+            call_command("refresh_branding", stdout=output)
+        self.assertIn("cache/logo de secours conservé", output.getvalue())
+        self.assertFalse((branding.directory() / "logo.png").exists())

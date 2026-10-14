@@ -1,6 +1,6 @@
 {
   "name": "arcenal-matos",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "build": "esbuild frontend/scan.js --bundle --minify --legal-comments=external --outfile=static/scan.bundle.js && python3 scripts/vendor_notices.py",

@@ -10,11 +10,10 @@ matos_dependencies() {
 }
 
 matos_config() {
-    read -r main_domain < /etc/yunohost/current_host
+    main_domain=$(</etc/yunohost/current_host)
     ynh_config_add --template=".env" --destination="$install_dir/.env"
     chown "$app:$app" "$install_dir/.env"
     chmod 400 "$install_dir/.env"
-    ynh_config_add_nginx
     ynh_config_add_systemd
     ynh_config_add_systemd --service="$app-jobs" --template="jobs.service"
     ynh_config_add --template="jobs.timer" --destination="/etc/systemd/system/$app-jobs.timer"

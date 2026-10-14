@@ -10,9 +10,10 @@ ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=".env .venv"
 chown -R "$app:www-data" "$install_dir"
 matos_dependencies
 matos_config
+ynh_config_add_nginx
 yunohost service add "$app" --description="ARCenal Matos" --log="/var/log/$app/$app.log"
 matos_manage migrate --noinput
-matos_manage refresh_branding || ynh_print_info "Logo mis en cache conservé ; personnalisation YunoHost réessayée par le timer."
+matos_manage refresh_branding 2>&1 || ynh_print_info "Logo mis en cache conservé ; personnalisation YunoHost réessayée par le timer."
 matos_manage collectstatic --noinput
 ynh_systemctl --service="$app" --action=start
 systemctl enable --now "$app-jobs.timer"

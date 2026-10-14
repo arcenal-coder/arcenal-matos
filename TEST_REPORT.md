@@ -1,4 +1,4 @@
-# Rapport de contrôle — ARCenal Matos 0.1.0 preview
+# Rapport de contrôle — ARCenal Matos 0.1.1 preview
 
 Statut : distribution preview, SSO/branding de production configurés ; recette réelle de plateforme à effectuer.
 Date : 2026-10-14.
@@ -11,7 +11,7 @@ Date : 2026-10-14.
 | Compilation Python | RÉUSSI | compileall sur core, matos et scripts |
 | Configuration Django | RÉUSSI | manage.py check ; aucun changement de migration en attente |
 | Dépendances Python | RÉUSSI | pip check : aucun conflit |
-| Tests applicatifs | RÉUSSI | 60 tests PostgreSQL/Django/structure, incluant branding/cache, signature, nominal, limites/refus et versions |
+| Tests applicatifs | RÉUSSI | 61 tests PostgreSQL/Django/structure, incluant branding/cache, fallback TLS sans traceback, signature, nominal, limites/refus et versions |
 | Concurrence de prêts | RÉUSSI | Deux validations concurrentes : un seul gagnant |
 | Autres écritures concurrentes | RÉUSSI | Import CSV concurrent : un identifiant unique ; annulation/sortie concurrentes : état cohérent |
 | Remise en service humaine | RÉUSSI | Une modification de date/périodicité ne débloque pas implicitement un contrôle déjà expiré |
@@ -35,16 +35,16 @@ Les régressions de bêta, y compris coûts décimaux MCP et jeu 300 humains + 1
 
 | Scénario | Résultat | Motif / suite |
 | --- | --- | --- |
-| package_linter officiel | NON_EXÉCUTÉ | Modèle de manifest à finaliser : URL de source distribuée et licence à déclarer |
-| package_check / environnement Incus | NON_EXÉCUTÉ | Aucune instance Linux/YunoHost d'essai fournie ou provisionnée |
-| Installation YunoHost | NON_EXÉCUTÉ | Sources et paquet préparés localement ; aucune installation sur serveur réel |
+| package_linter officiel | RÉUSSI (0.1.0~ynh3) | Run 38596598439 ; licence personnalisée et README signalés ; candidate 0.1.1 à requalifier |
+| package_check / environnement Incus | ÉCHEC (0.1.0~ynh3) | YunoHost 12.1.41.2 amd64 ; installation réussie, contrôle web anonyme attendait 200 au lieu du refus 401 ; tests SSO et anonyme explicites ajoutés, nouvelle qualification requise |
+| Installation YunoHost | RÉUSSI (0.1.0~ynh3, Incus) | Run 38596598439 ; serveur cible non installé, SSH refusé |
 | Retrait / réinstallation | NON_EXÉCUTÉ | À vérifier sur YunoHost d'essai |
 | Mise à jour | NON_EXÉCUTÉ | À vérifier avec une version précédente et une sauvegarde complète |
 | Sauvegarde / restauration YunoHost | NON_EXÉCUTÉ | Scripts préparés ; restauration réelle et cohérence documents/base à démontrer |
 | SSO/LDAP réels | NON_EXÉCUTÉ | Middleware et refus testés ; identité de proxy simulée dans les tests, profils fictifs dans la bêta locale |
 | SMTP réel / réception fournisseur | NON_EXÉCUTÉ | Déduplication, validation et gestion d'erreur testées ; transport local console et tests avec transport simulé |
 | Connexion du profil Hermès réel | NON_EXÉCUTÉ | Serveur MCP testé avec client officiel ; export YAML ARCenal, import natif Hermès non démontré |
-| Catalogue ARCenal Store | NON_EXÉCUTÉ | Contrat de catalogue et dépôt de distribution absents ; aucune promotion réalisée |
+| Catalogue ARCenal Store | NON_EXÉCUTÉ | Entrée préparée dans le catalogue canonique, publication en attente de qualification du paquet |
 | Caméra sur téléphone physique | NON_EXÉCUTÉ | Décodeur QR vérifié sur image et viewport mobile ; permissions/caméra réelles à tester |
 | Étiquettes NFC iPhone/Android | NON_EXÉCUTÉ | Parcours URL validé fonctionnellement ; appareils/étiquettes physiques non disponibles |
 | Application native / RFID distant | NON_APPLICABLE_JUSTIFIÉ | Hors périmètre V1 confirmé |

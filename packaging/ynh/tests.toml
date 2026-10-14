@@ -2,3 +2,13 @@ test_format = 1.0
 
 [default]
     args.init_main_permission = "all_users"
+
+    [default.curl_tests]
+    dashboard.logged_on_sso = true
+    dashboard.expect_title = "ARCenal Matos"
+    dashboard.expect_content = "Par ARCenal"
+    dashboard.auto_test_assets = true
+
+    anonymous.path = "/login/"
+    anonymous.expect_return_code = 401
+    anonymous.expect_title = "ARCenal Matos"

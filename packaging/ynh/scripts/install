@@ -6,18 +6,21 @@ ynh_permission_has_user --permission=main --user="$admin" || ynh_die "Le compte 
 
 ynh_script_progression "Installation des sources ARCenal Matos..."
 ynh_setup_source --dest_dir="$install_dir"
+set +x
 secret_key=$(ynh_string_random --length=64)
 mcp_token=$(ynh_string_random --length=64)
 ynh_app_setting_set --key=secret_key --value="$secret_key"
 ynh_app_setting_set --key=mcp_token --value="$mcp_token"
+set -x
 chown -R "$app:www-data" "$install_dir"
 matos_dependencies
 matos_config
+ynh_config_add_nginx
 yunohost service add "$app" --description="ARCenal Matos" --log="/var/log/$app/$app.log"
 matos_manage migrate --noinput
 matos_manage sync_users
 matos_manage bootstrap_admin "$admin"
-matos_manage refresh_branding || ynh_print_info "Logo ARCenal de secours ; le logo YunoHost sera réessayé par le timer."
+matos_manage refresh_branding 2>&1 || ynh_print_info "Logo ARCenal de secours ; le logo YunoHost sera réessayé par le timer."
 matos_manage collectstatic --noinput
 ynh_systemctl --service="$app" --action=start
 systemctl enable --now "$app-jobs.timer"

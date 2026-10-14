@@ -1,4 +1,4 @@
-# ARCenal Matos · 0.1.0 — preview
+# ARCenal Matos · 0.1.1 — preview
 
 Application web responsive de gestion interne des actifs, Django/PostgreSQL, MCP intégré et liaison YAML pour un agent logisticien créé dans Hermès.
 
@@ -24,7 +24,7 @@ Ouvrir **http://127.0.0.1:8765/**. Choisir un profil fictif sur la page de conne
 
 Le thème **Gratitude amélioré** reprend les références communes ARCenal : crème/ivoire, accent terre cuite et variables CSS sémantiques. Le sélecteur **Apparence** propose Clair, Sombre et Système ; le choix manuel persiste dans ce navigateur. La police Inter et les dépendances du scanner sont servies localement. Navigation compacte, focus clavier, cibles tactiles et tableaux défilants sont intégrés.
 
-La version de l'application et des archives provient de `matos/version.py`. Les manifests JavaScript et YunoHost sont contrôlés pour rester cohérents. Les anciennes archives bêta/RC sont conservées dans `dist/` ; les nouvelles archives portent `0.1.0`.
+La version de l'application et des archives provient de `matos/version.py`. Les manifests JavaScript et YunoHost sont contrôlés pour rester cohérents. Les anciennes archives bêta/RC sont conservées dans `dist/` ; les nouvelles archives portent `0.1.1`.
 
 L'inventaire démarre vide. L'administrateur définit sites et catégories ; un gestionnaire ajoute une fiche ou télécharge le modèle CSV. Le collaborateur demande un prêt ; le gestionnaire le valide puis enregistre sortie et retour. Utiliser l'écran des intégrations comme administrateur pour télécharger le YAML du logisticien.
 
