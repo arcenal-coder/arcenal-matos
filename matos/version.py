@@ -2,4 +2,4 @@
 
 VERSION = "0.1.1"
 RELEASE_LABEL = "Preview"
-YUNOHOST_VERSION = "0.1.1~ynh1"
+YUNOHOST_VERSION = "0.1.1~ynh5"

@@ -1,0 +1,15 @@
+#!/bin/bash
+source _common.sh
+source /usr/share/yunohost/helpers
+
+ynh_script_progression "Arrêt pour changement de domaine..."
+ynh_systemctl --service="$app-jobs.timer" --action=stop
+ynh_systemctl --service="$app-jobs" --action=stop
+ynh_systemctl --service="$app" --action=stop
+
+ynh_config_change_url_nginx
+matos_config
+
+ynh_systemctl --service="$app" --action=start
+systemctl enable --now "$app-jobs.timer"
+ynh_script_progression "Changement de domaine ARCenal Matos terminé"

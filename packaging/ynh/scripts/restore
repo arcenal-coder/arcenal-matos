@@ -3,6 +3,9 @@ source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 ynh_restore "$install_dir"
+chown -R "$app:www-data" "$install_dir"
+chown "$app:$app" "$install_dir/.env"
+chmod 400 "$install_dir/.env"
 ynh_restore "$data_dir"
 chown -R "$app:$app" "$data_dir"
 ynh_psql_db_shell "$db_name" < ./db.sql
@@ -12,6 +15,7 @@ ynh_restore "/etc/systemd/system/$app.service"
 ynh_restore "/etc/systemd/system/$app-jobs.service"
 ynh_restore "/etc/systemd/system/$app-jobs.timer"
 systemctl daemon-reload
+systemctl enable "$app.service" --quiet
 yunohost service add "$app" --description="ARCenal Matos" --log="/var/log/$app/$app.log"
 ynh_systemctl --service="$app" --action=start
 systemctl enable --now "$app-jobs.timer"

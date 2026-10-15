@@ -8,6 +8,8 @@ Logiciel propriétaire — conditions dans LICENSE. Distribution destinée au ca
 
 Paquet : https://github.com/arcenal-coder/arcenal-matos_ynh/tree/preview. L'installation choisit le domaine, le groupe YunoHost autorisé et le compte administrateur ; aucun compte ou mot de passe applicatif à créer. Le processus web utilise un socket Unix réservé à l'application et Nginx, les identités proviennent de SSOwat, les rôles/sites se configurent dans Matos.
 
+Matos est référencé en **preview** dans le catalogue canonique ARCenal : `https://raw.githubusercontent.com/arcenal-coder/arcenal-systeme-catalogue/main/preview`. Paquet figé `0.1.1~ynh5`, révision `b8ef047930d7c64944b83a485c2c8f13dd414794`. La publication a été vérifiée sur le flux brut et son miroir GitHub Pages ; PR catalogue [#11](https://github.com/arcenal-coder/arcenal-systeme-catalogue/pull/11).
+
 Le logo est récupéré depuis le portail public YunoHost de l'instance, mis en cache localement et actualisé périodiquement. Le logo ARCenal est conservé si aucun logo d'organisation n'est disponible. La signature « Par ARCenal » apparaît au bas de toutes les pages et des rapports PDF.
 
 Les paramètres secrets restent sur le serveur. L'export YAML ne contient pas le jeton MCP ; sa liaison au profil Hermès se configure séparément.
@@ -32,7 +34,7 @@ Python isolé dans `.venv/`, PostgreSQL 17 dans `.local/postgres`, port **55432*
 
 Pour arrêter le serveur et le worker : `.venv/bin/python scripts/stop_local.py`. PostgreSQL local peut être arrêté avec `/opt/homebrew/opt/postgresql@17/bin/pg_ctl -D .local/postgres stop` sur ce Mac. Aucun service global de démarrage automatique n'est configuré.
 
-## Capacités de la RC
+## Capacités de la preview
 
 - Rôles et rattachements multisites, droits contrôlés côté serveur et documents privés.
 - Inventaire matériel, champs personnalisés, affectations, QR/Code128 et scan caméra embarqué sans CDN.
@@ -66,7 +68,7 @@ Pour reconstruire l'environnement Python : `python3 -m venv .venv`, puis `.venv/
 
 ## Paquet YunoHost candidat
 
-`packaging/ynh/` suit le format v2/helpers 2.1 : manifest, scripts install/remove/upgrade/backup/restore, PostgreSQL, SSO/LDAP, SMTP et timer de rappels. Domaine dédié, cible YunoHost >= 12.1. Les profils/sites de démonstration ne sont pas créés à l'installation YunoHost.
+`packaging/ynh/` suit le format v2/helpers 2.1 : manifest, scripts install/remove/upgrade/backup/restore/change_url, PostgreSQL, SSO/LDAP, SMTP et timer de rappels. Domaine dédié, cible YunoHost >= 12.1.17. Les profils/sites de démonstration ne sont pas créés à l'installation YunoHost.
 
 ```sh
 .venv/bin/python scripts/build_beta.py
@@ -76,9 +78,11 @@ Cette commande produit une archive de sources et un **modèle de paquet** dans `
 
 ## Vérifications restant à effectuer sur infrastructure réelle
 
-- Installation, retrait, mise à jour et sauvegarde/restauration sur YunoHost ; SSO/LDAP/SMTP réels.
-- Intégration au catalogue ARCenal Store, dont le contrat n'est pas présent dans le dépôt.
+- Sur le serveur cible : installation, contrôle des groupes/sites et du logo, SSO/LDAP, SMTP avec réception réelle, politique de sauvegarde et restauration de données métier. Le SSH du serveur cible reste inaccessible dans cette session.
+- Parcours d'installation depuis ARCenal Store sur le serveur cible. Le catalogue est publié ; son affichage et le clic d'installation sur cette instance restent à recetter.
 - Scan caméra et étiquettes NFC sur iPhone/Android physiques. Le NFC ouvre une URL sur appareils compatibles ; il ne réalise pas un inventaire à distance. Les URL de la bêta loopback sont accessibles uniquement sur le Mac.
 - Profil Hermès réel et import de sa configuration ; recette fonctionnelle par le client.
 
 Les états et preuves détaillés de la bêta sont conservés dans `.arcenal/`. Une bêta locale n'est pas une validation du déploiement YunoHost ou Store.
+
+La qualification isolée est réussie sur YunoHost 12.1.41.2 **amd64** : installation/retrait/réinstallation, connexion SSO réelle et refus anonyme, assets, upgrade même version, sauvegarde/restauration et changement de domaine ([preuve](https://github.com/arcenal-coder/arcenal-matos_ynh/actions/runs/38622713770)). `arm64` est déclaré compatible mais son installation n'a pas été exécutée. Le niveau communautaire reste 0 car le paquet ne figure pas au catalogue officiel YunoHost ; les preuves techniques ARCenal sont tracées séparément dans `TEST_REPORT.md`.

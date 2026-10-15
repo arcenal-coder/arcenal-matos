@@ -2,6 +2,12 @@ test_format = 1.0
 
 [default]
     args.init_main_permission = "all_users"
+    # Align the downloaded appci image's test identity with package_check.
+    preinstall = """
+    set +x
+    yunohost user update "$USER" --change-password "$YUNO_PWD"
+    set -x
+    """
 
     [default.curl_tests]
     dashboard.logged_on_sso = true

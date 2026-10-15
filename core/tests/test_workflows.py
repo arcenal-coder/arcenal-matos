@@ -13,7 +13,7 @@ import yaml
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import close_old_connections, connection
-from django.test import Client, TestCase, TransactionTestCase, override_settings
+from django.test import AsyncClient, Client, TestCase, TransactionTestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
@@ -387,6 +387,15 @@ class Screens(Fixtures, TestCase):
         response = self.client.get("/", HTTP_YNH_USER=self.manager.username)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.client.get("/").status_code, 302)
+
+    @override_settings(DEV_LOGIN=False, TRUST_YNH_HEADERS=True)
+    async def test_sso_identity_through_asgi_header_normalization(self):
+        client = AsyncClient()
+        # Exercise Django's ASGI parser, which discards underscore headers.
+        response = await client.get("/", headers={"YNH-USER": self.manager.username})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.asgi_request.user.username, self.manager.username)
+        self.assertEqual((await client.get("/")).status_code, 302)
 
     def test_no_password_authentication(self):
         self.assertFalse(self.member.has_usable_password())

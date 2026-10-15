@@ -1,7 +1,7 @@
 # Rapport de contrôle — ARCenal Matos 0.1.1 preview
 
 Statut : distribution preview, SSO/branding de production configurés ; recette réelle de plateforme à effectuer.
-Date : 2026-10-14.
+Date : 2026-10-15.
 
 ## Contrôles locaux
 
@@ -11,7 +11,7 @@ Date : 2026-10-14.
 | Compilation Python | RÉUSSI | compileall sur core, matos et scripts |
 | Configuration Django | RÉUSSI | manage.py check ; aucun changement de migration en attente |
 | Dépendances Python | RÉUSSI | pip check : aucun conflit |
-| Tests applicatifs | RÉUSSI | 61 tests PostgreSQL/Django/structure, incluant branding/cache, fallback TLS sans traceback, signature, nominal, limites/refus et versions |
+| Tests applicatifs | RÉUSSI | 62 tests PostgreSQL/Django/structure, incluant identité SSO via ASGI, branding/cache, fallback TLS sans traceback, signature, nominal, limites/refus et versions |
 | Concurrence de prêts | RÉUSSI | Deux validations concurrentes : un seul gagnant |
 | Autres écritures concurrentes | RÉUSSI | Import CSV concurrent : un identifiant unique ; annulation/sortie concurrentes : état cohérent |
 | Remise en service humaine | RÉUSSI | Une modification de date/périodicité ne débloque pas implicitement un contrôle déjà expiré |
@@ -35,16 +35,17 @@ Les régressions de bêta, y compris coûts décimaux MCP et jeu 300 humains + 1
 
 | Scénario | Résultat | Motif / suite |
 | --- | --- | --- |
-| package_linter officiel | RÉUSSI (0.1.0~ynh3) | Run 38596598439 ; licence personnalisée et README signalés ; candidate 0.1.1 à requalifier |
-| package_check / environnement Incus | ÉCHEC (0.1.0~ynh3) | YunoHost 12.1.41.2 amd64 ; installation réussie, contrôle web anonyme attendait 200 au lieu du refus 401 ; tests SSO et anonyme explicites ajoutés, nouvelle qualification requise |
-| Installation YunoHost | RÉUSSI (0.1.0~ynh3, Incus) | Run 38596598439 ; serveur cible non installé, SSH refusé |
-| Retrait / réinstallation | NON_EXÉCUTÉ | À vérifier sur YunoHost d'essai |
-| Mise à jour | NON_EXÉCUTÉ | À vérifier avec une version précédente et une sauvegarde complète |
-| Sauvegarde / restauration YunoHost | NON_EXÉCUTÉ | Scripts préparés ; restauration réelle et cohérence documents/base à démontrer |
-| SSO/LDAP réels | NON_EXÉCUTÉ | Middleware et refus testés ; identité de proxy simulée dans les tests, profils fictifs dans la bêta locale |
+| package_linter officiel | RÉUSSI dans package_check | Run 38622713770 ; avertissements licence personnalisée/README ; aucune qualification communautaire officielle revendiquée |
+| package_check / environnement Incus | RÉUSSI | 0.1.1~ynh5, révision b8ef047930d7c64944b83a485c2c8f13dd414794 ; YunoHost 12.1.41.2 amd64 ; cinq scénarios réussis |
+| Installation YunoHost | RÉUSSI (Incus) | Run 38622713770 ; serveur cible non installé, SSH refusé |
+| Retrait / réinstallation | RÉUSSI (Incus) | Scénario install.root, accès web vérifié après réinstallation |
+| Mise à jour | RÉUSSI (Incus, même version) | Scénario upgrade ; migration depuis une future version métier distincte à recetter |
+| Sauvegarde / restauration YunoHost | RÉUSSI (Incus) | Restauration après retrait et sur système vierge ; accès SSO et assets contrôlés ; données métier réelles et politique d'exploitation cible à recetter |
+| SSO/LDAP réels | RÉUSSI (Incus) | Compte LDAP et connexion au portail réels, tableau de bord connecté 200, anonyme refusé 401 ; serveur cible non recetté |
+| Changement de domaine | RÉUSSI (Incus) | Scénario change_url et configuration SSO/origines régénérée |
 | SMTP réel / réception fournisseur | NON_EXÉCUTÉ | Déduplication, validation et gestion d'erreur testées ; transport local console et tests avec transport simulé |
 | Connexion du profil Hermès réel | NON_EXÉCUTÉ | Serveur MCP testé avec client officiel ; export YAML ARCenal, import natif Hermès non démontré |
-| Catalogue ARCenal Store | NON_EXÉCUTÉ | Entrée préparée dans le catalogue canonique, publication en attente de qualification du paquet |
+| Catalogue ARCenal Store | RÉUSSI (publication) | PR #11 fusionnée ; workflow 38688794615 réussi ; flux brut et Pages vérifiés avec la révision qualifiée ; parcours Store sur le serveur cible NON_EXÉCUTÉ |
 | Caméra sur téléphone physique | NON_EXÉCUTÉ | Décodeur QR vérifié sur image et viewport mobile ; permissions/caméra réelles à tester |
 | Étiquettes NFC iPhone/Android | NON_EXÉCUTÉ | Parcours URL validé fonctionnellement ; appareils/étiquettes physiques non disponibles |
 | Application native / RFID distant | NON_APPLICABLE_JUSTIFIÉ | Hors périmètre V1 confirmé |
@@ -54,3 +55,14 @@ Les régressions de bêta, y compris coûts décimaux MCP et jeu 300 humains + 1
 Ouvrir la bêta locale, choisir successivement Administrateur, Gestionnaire et Collaborateur. Créer/importer du matériel, demander et valider un prêt, effectuer sortie/retour, préparer une intervention et une demande fournisseur, puis exporter rapports et YAML. Les données de tests automatisés sont isolées de l'inventaire de la bêta.
 
 La recette cliente, la publication et le déploiement restent des étapes distinctes des contrôles locaux.
+
+## Preuves de distribution
+
+- Source immuable : https://github.com/arcenal-coder/arcenal-matos/releases/tag/v0.1.1 ; SHA256 `ff063e8fc5cbf811b6261d4d4f0b3b69e9a88fa36fb7144131343827b7540f24`.
+- CI application Linux : https://github.com/arcenal-coder/arcenal-matos/actions/runs/38616759680 (61 tests à cette révision ; régression ASGI ajoutée ensuite, 62 tests locaux réussis).
+- Paquet qualifié : https://github.com/arcenal-coder/arcenal-matos_ynh/actions/runs/38622713770.
+- Catalogue : https://github.com/arcenal-coder/arcenal-systeme-catalogue/pull/11 ; publication https://github.com/arcenal-coder/arcenal-systeme-catalogue/actions/runs/38688794615 ; Matos présent en preview et absent du canal stable.
+- RÉUSSI : redémarrage local 0.1.1 sans migration, logo société téléchargé, smoke HTTP/YAML/PDF/MCP avec 14 outils sur http://127.0.0.1:8765/.
+- NON_EXÉCUTÉ : installation arm64 (compatibilité déclarée, qualification exécutée uniquement en amd64).
+- Le niveau communautaire retourné reste 0 (hors catalogue officiel YunoHost) malgré les cinq scénarios réussis ; le catalogue ARCenal conserve ce niveau, sans le convertir en note 8.
+- Correctifs prouvés : lecture EOF current_host, branding optionnel avec TLS strict, tests SSO explicites, normalisation YNH-USER pour Django ASGI et réactivation systemd/permissions privées après restauration.
