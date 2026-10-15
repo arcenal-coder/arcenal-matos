@@ -50,6 +50,9 @@ class BrandingTests(TestCase):
         logo = self.client.get("/branding/logo/")
         self.assertEqual(logo.status_code, 200)
         self.assertTrue(b"".join(logo.streaming_content).startswith(b"\x89PNG"))
+        self.client.logout()
+        self.assertContains(self.client.get("/login/"), 'alt="Logo de la société"')
+        self.assertEqual(self.client.get("/branding/logo/").status_code, 200)
 
     def test_portal_failure_keeps_existing_logo(self):
         with patch("core.branding.urlopen", side_effect=self.response):

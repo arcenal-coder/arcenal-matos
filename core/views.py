@@ -85,12 +85,11 @@ def logout_view(request):
     return redirect("login" if settings.DEV_LOGIN else "/yunohost/sso/?action=logout")
 
 
-@login_required
 def company_logo(request):
     if not branding.has_logo():
         return HttpResponse(status=404)
     response = FileResponse((branding.directory() / "logo.png").open("rb"), content_type="image/png")
-    response["Cache-Control"] = "private, max-age=300"
+    response["Cache-Control"] = "public, max-age=300"
     return response
 
 

@@ -395,6 +395,16 @@ class Screens(Fixtures, TestCase):
         response = await client.get("/", headers={"YNH-USER": self.manager.username})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.asgi_request.user.username, self.manager.username)
+        response = await client.post("/assets/new/", {
+            "code": "SSO-1", "name": "Matériel saisi via SSO", "category": self.category.pk,
+            "site": self.site.pk, "state": "available", "custom_fields": "{}",
+        }, headers={"YNH-USER": self.manager.username})
+        self.assertEqual(response.status_code, 302)
+        item = await Asset.objects.aget(code="SSO-1")
+        self.assertEqual(item.site_id, self.site.pk)
+        self.assertTrue(await Event.objects.filter(action="asset.created", actor=self.manager).aexists())
+        detail = await client.get(response.url, headers={"YNH-USER": self.manager.username})
+        self.assertContains(detail, "Matériel saisi via SSO")
         self.assertEqual((await client.get("/")).status_code, 302)
 
     def test_no_password_authentication(self):

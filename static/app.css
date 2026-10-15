@@ -76,6 +76,7 @@
 html { min-height: 100%; }
 body {
   margin: 0; min-height: 100vh;
+  display: flex; flex-direction: column;
   background: linear-gradient(135deg, var(--arc-background), var(--arc-background-tint));
   background-attachment: fixed; color: var(--arc-text);
   font: 400 16px/1.5 var(--arc-font-ui);
@@ -97,7 +98,7 @@ p { color: var(--arc-text-secondary); max-width: 75ch; overflow-wrap: anywhere; 
 .brand { display: flex; align-items: center; gap: 12px; color: var(--arc-text); margin: 0 0 24px; font-size: 20px; }
 .brand:hover { text-decoration: none; }
 .brand.with-company-logo { flex-direction: column; align-items: start; gap: 8px; }
-.company-logo { width: 176px; max-width: 100%; max-height: 72px; object-fit: contain; background: var(--arc-company-logo-surface); padding: 8px; border-radius: 10px; }
+.company-logo { width: 176px; max-width: 100%; max-height: 72px; object-fit: contain; object-position: left center; }
 .brand strong { color: var(--arc-primary); }
 .brand small { font-size: 12px; }
 .logo {
@@ -118,7 +119,7 @@ p { color: var(--arc-text-secondary); max-width: 75ch; overflow-wrap: anywhere; 
 .nav-toggle { display: none; }
 .sidefoot { margin-top: auto; padding: 24px 12px 0; color: var(--arc-text-secondary); font-size: 12px; }
 .dot { display: inline-block; width: 8px; height: 8px; background: var(--arc-success); border-radius: 50%; margin-right: 8px; }
-.workspace { margin-left: 264px; min-width: 0; }
+.workspace { margin-left: 264px; min-width: 0; min-height: 100vh; flex: 1; display: flex; flex-direction: column; }
 .topbar {
   background: var(--arc-surface); border-bottom: 1px solid var(--arc-border);
   min-height: 88px; padding: 16px 32px; display: flex; align-items: center;
@@ -130,7 +131,7 @@ p { color: var(--arc-text-secondary); max-width: 75ch; overflow-wrap: anywhere; 
 .theme-control { display: flex; flex-direction: column; gap: 4px; }
 .theme-control label { margin: 0; font-size: 12px; color: var(--arc-text-secondary); }
 .theme-control select { min-width: 108px; }
-main { max-width: 1280px; margin: auto; padding: 32px; }
+main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 32px; flex: 1; }
 .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--arc-primary); }
 .pagehead { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
 .pagehead p { margin: 4px 0; }
@@ -236,8 +237,8 @@ video { width: 100%; max-height: 400px; border-radius: 12px; }
 .pagination a { min-height: 44px; display: inline-flex; align-items: center; }
 .welcome { max-width: 850px; margin-bottom: 32px; }
 .welcome h1 { font-size: clamp(32px, 4vw, 44px); }
-footer { padding: 8px 32px 32px; color: var(--arc-text-secondary); font-size: 12px; display: flex; align-items: end; gap: 16px; flex-wrap: wrap; }
-.arcenal-signature { margin-left: auto; text-align: right; font-weight: 700; color: var(--arc-primary); white-space: nowrap; }
+footer { margin-top: auto; flex-shrink: 0; padding: 8px 32px 24px; color: var(--arc-text-secondary); font-size: 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 16px; }
+.arcenal-signature { justify-self: end; text-align: right; font-weight: 700; color: var(--arc-primary); white-space: nowrap; }
 hr { border: 0; border-top: 1px solid var(--arc-border); margin: 24px 0; }
 summary { cursor: pointer; min-height: 44px; padding-block: 8px; }
 @media (max-width: 1100px) {
@@ -258,7 +259,7 @@ summary { cursor: pointer; min-height: 44px; padding-block: 8px; }
   .js .sidebar nav { display: none; }
   .js .sidebar.nav-open nav { display: block; max-height: 60vh; }
   .sidefoot { display: none; }
-  .workspace { margin-left: 0; }
+  .workspace { margin-left: 0; min-height: 0; }
   .topbar { padding: 16px; }
   .header-tools, .identity { gap: 12px; flex-wrap: wrap; }
   .theme-control { min-width: 108px; }

@@ -5,6 +5,14 @@ Date : 2026-10-15.
 
 ## Contrôles locaux
 
+### Correctif local prioritaire du 15 octobre 2026 (après publication)
+
+- Portée cliente : application prévue pour LDAP/SSO YunoHost et saisie/suivi du matériel ; aucun raccordement distant demandé.
+- RÉUSSI : 21 tests ciblés branding/écrans ; identité SSO via ASGI → création persistée/journalisée d'une fiche → consultation, accès sans identité refusé.
+- RÉUSSI : 17 parcours Chromium ; géométrie de « Par ARCenal » au bas droit des pages courtes et longues, ordinateur/mobile ; création et suivi matériel conservés.
+- RÉUSSI : logo société transparent sans cadre sur connexion et pages authentifiées ; redémarrage local sans migration et smoke HTTP/MCP.
+- Aperçu local actualisé ; ces corrections ne sont pas incluses dans l'archive immuable v0.1.1 déjà publiée. Authentification réelle LDAP/SSO prévue pour l'installation YunoHost ; profils d'essai dans l'aperçu local.
+
 | Contrôle | Résultat | Preuve |
 | --- | --- | --- |
 | Linter Python | RÉUSSI | ruff check . |
