@@ -68,6 +68,17 @@ class BrandingTests(TestCase):
             with self.assertRaises(ValueError):
                 branding.refresh(force=True)
 
+    def test_dark_logo_retains_transparency_and_brand_colors(self):
+        branding.directory().mkdir(parents=True, exist_ok=True)
+        image = Image.new("RGBA", (3, 1))
+        image.putdata([(12, 12, 12, 255), (20, 100, 220, 255), (0, 0, 0, 0)])
+        image.save(branding.directory() / "company.png")
+        response = self.client.get("/branding/logo/?mode=dark")
+        with Image.open(io.BytesIO(response.content)) as result:
+            self.assertGreater(result.getpixel((0, 0))[0], 200)
+            self.assertEqual(result.getpixel((1, 0)), (20, 100, 220, 255))
+            self.assertEqual(result.getpixel((2, 0))[3], 0)
+
     def test_refresh_command_handles_untrusted_certificate_without_traceback(self):
         output = io.StringIO()
         with patch("core.branding.urlopen", side_effect=URLError("certificate verify failed")):

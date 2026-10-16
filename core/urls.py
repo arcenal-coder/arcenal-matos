@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from . import intake, views
 
 urlpatterns = [
     path("branding/logo/", views.company_logo, name="company-logo"),
@@ -21,6 +21,11 @@ urlpatterns = [
     path("licenses/new/", views.license_edit, name="license-new"), path("licenses/<int:pk>/edit/", views.license_edit, name="license-edit"),
     path("licenses/<int:pk>/allocate/", views.license_allocate, name="license-allocate"),
     path("settings/", views.settings_view, name="settings"), path("setup/<str:kind>/", views.setup, name="setup-new"),
+    path("settings/logo/", intake.upload_logo, name="upload-logo"),
+    path("settings/<str:section>/", views.settings_view, name="settings-section"),
+    path("intake/references/<str:kind>/", intake.references, name="intake-reference"),
+    path("intake/assistance/", intake.request_assistance, name="intake-assistance"),
+    path("intake/assistance/<uuid:pk>/", intake.assistance_result, name="intake-result"),
     path("setup/<str:kind>/<int:pk>/", views.setup, name="setup-edit"),
     path("import/", views.csv_import, name="import"), path("reports/", views.reports, name="reports"),
     path("documents/<uuid:pk>/", views.download_document, name="document"), path("scan/", views.scan, name="scan"),

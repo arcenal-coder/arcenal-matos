@@ -12,7 +12,8 @@ root = Path(__file__).resolve().parent.parent
 database = "arcenal_matos_browser"
 env = os.environ | {"PGDATABASE": database, "MATOS_DEBUG": "1", "MATOS_DEV_LOGIN": "1",
                     "MATOS_TRUST_YNH_HEADERS": "0", "MATOS_SECRET_KEY": secrets.token_urlsafe(48),
-                    "MATOS_MCP_TOKEN": secrets.token_urlsafe(48), "MATOS_PUBLIC_URL": "http://127.0.0.1:8766"}
+                    "MATOS_MCP_TOKEN": secrets.token_urlsafe(48), "MATOS_PUBLIC_URL": "http://127.0.0.1:8766",
+                    "MATOS_DATA_DIR": str(root / ".local/browser-media")}
 with psycopg.connect(dbname="postgres", user=env.get("PGUSER", env["USER"]), host=env.get("PGHOST", "127.0.0.1"),
                      port=env.get("PGPORT", "55432"), autocommit=True) as connection:
     if not connection.execute("SELECT 1 FROM pg_database WHERE datname = %s", [database]).fetchone():

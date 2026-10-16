@@ -19,12 +19,12 @@ test('parcours réel : fiche, demande, validation, sortie, retour et maintenance
   page.on('pageerror', error => failures.push(error.message));
   await login(page, 'Gestionnaire Siège — Gestionnaire');
   await page.goto('/assets/new/');
-  await page.locator('[name=code]').fill('E2E-1');
   await page.locator('[name=name]').fill('Perceuse E2E');
   await page.locator('[name=category]').selectOption({ label: 'Matériel général' });
   await page.locator('[name=site]').selectOption({ label: 'Siège (essai)' });
-  await page.locator('[name=custom_fields]').fill('{"couleur":"bleu"}');
   await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
+  await expect(page).toHaveURL(/\/inventory\/$/);
+  await page.getByRole('link', { name: /Perceuse E2E/ }).click();
   await expect(page.getByRole('heading', { name: 'Perceuse E2E', exact: true })).toBeVisible();
   const assetUrl = new URL(page.url()).pathname;
   await page.getByRole('button', { name: 'Déconnexion' }).click();
@@ -88,7 +88,7 @@ test('modèle CSV, import atomique et rapports PDF/CSV', async ({ page }) => {
 test('administrateur : export YAML sans secret et écrans de configuration', async ({ page }) => {
   await login(page, "Administrateur d'essai — Administrateur");
   await page.goto('/integration/');
-  await expect(page.getByRole('heading', { name: 'MCP & liaison Hermès' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Agent & MCP' })).toBeVisible();
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Télécharger le YAML' }).click();
   const yaml = (await downloadBytes(await downloadPromise)).toString();
@@ -96,7 +96,7 @@ test('administrateur : export YAML sans secret et écrans de configuration', asy
   expect(yaml).toContain('credential_ref: MATOS_MCP_TOKEN');
   expect(yaml).toContain('supplier_requests.approve');
   await page.goto('/settings/');
-  await expect(page.getByRole('heading', { name: 'Organisation & profils' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Paramètres' })).toBeVisible();
 });
 
 test('affichage mobile et refus de gestion hors site', async ({ page }) => {
@@ -112,7 +112,7 @@ test('affichage mobile et refus de gestion hors site', async ({ page }) => {
 
 test('décodage réel du QR généré depuis une image', async ({ page }) => {
   await login(page, 'Gestionnaire Siège — Gestionnaire');
-  await page.goto('/inventory/?q=E2E-1');
+  await page.goto('/inventory/?q=Perceuse%20E2E');
   await page.getByRole('link', { name: 'Perceuse E2E' }).click();
   const imageUrl = await page.getByAltText('QR code de la fiche').getAttribute('src');
   const image = await page.request.get(imageUrl);

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Asset, Category, Intervention, License, Site, Supplier, User
+from .models import Asset, Brand, Category, DeviceModel, Intervention, License, Site, Supplier, User
 from .permissions import sites
 
 
@@ -13,18 +13,36 @@ class DateInput(forms.DateInput):
 
 
 class AssetForm(forms.ModelForm):
+    brand = forms.ChoiceField(label="Marque", required=False)
+    model = forms.ChoiceField(label="Modèle", required=False)
+
     class Meta:
         model = Asset
-        fields = ["code", "name", "category", "brand", "model", "serial", "site", "location", "state",
-                  "purchase_date", "purchase_cost", "control_required", "last_control", "next_control", "interval_days", "custom_fields"]
+        fields = ["name", "category", "brand", "model", "serial", "site", "location", "state",
+                  "purchase_date", "purchase_cost", "control_required", "last_control", "next_control", "interval_days"]
         widgets = {key: DateInput() for key in ("purchase_date", "last_control", "next_control")}
 
     def __init__(self, *args, actor, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["site"].queryset = sites(actor)
+        brands = list(Brand.objects.order_by("name").values_list("name", flat=True))
+        if self.instance.brand and self.instance.brand not in brands:
+            brands.append(self.instance.brand)
+        self.fields["brand"].choices = [("", "Choisir une marque (facultatif)")] + [(name, name) for name in brands]
+        brand = self.data.get("brand", self.instance.brand) if self.is_bound else self.instance.brand
+        models = list(DeviceModel.objects.filter(brand__name=brand).order_by("name").values_list("name", flat=True))
+        if self.instance.model and brand == self.instance.brand and self.instance.model not in models:
+            models.append(self.instance.model)
+        self.fields["model"].choices = [("", "Choisir un modèle (facultatif)")] + [(name, name) for name in models]
+        self.fields["category"].label = "Type d’appareil / catégorie"
+        self.fields["interval_days"].label = "Contrôle tous les (jours)"
+        self.fields["interval_days"].help_text = "Laissez vide pour utiliser la périodicité de la catégorie. L’agent peut la renseigner s’il est activé."
+        if not self.is_bound and self.instance._state.adding and self.fields["site"].queryset.count() == 1:
+            self.fields["site"].initial = self.fields["site"].queryset.first().pk
         if self.instance.pk and not self.instance._state.adding:
             self.fields["site"].disabled = True
-            self.fields["code"].disabled = True
+        self.primary_fields = [self[name] for name in ("name", "category", "brand", "model", "serial", "site", "location", "state")]
+        self.detail_fields = [self[name] for name in ("purchase_date", "purchase_cost", "control_required", "last_control", "next_control", "interval_days")]
 
 
 class ReservationForm(forms.Form):

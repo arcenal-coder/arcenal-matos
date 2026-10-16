@@ -36,6 +36,20 @@ Pour arrêter le serveur et le worker : `.venv/bin/python scripts/stop_local.py`
 
 ## Capacités de la preview
 
+### Saisie simplifiée en développement
+
+Le code de travail ajoute un menu **Paramètres** avec Agent & MCP, Gestion des utilisateurs, Sites et Catégories & périodicités. Ces changements sont disponibles dans l'aperçu local ; ils ne font pas encore partie de l'archive immuable v0.1.1 publiée.
+
+- **Inventaire → Ajouter** : identifiant automatique par type/catégorie et séquence verrouillée ; les clés déjà attribuées restent stables.
+- Catégories, marques et modèles ajoutables sur place. Marques/modèles mémorisés, variantes de casse réutilisées et noms proches proposés pour éviter les erreurs de frappe. Les modèles sont rattachés à leur marque.
+- Aucun champ JSON dans la saisie humaine ; les données historiques et leur compatibilité CSV/MCP sont conservées.
+- Enregistrer ou Annuler ramènent à l'inventaire ; achat et contrôles sont regroupés dans une section facultative.
+- Logo société repris du portail ou téléversé dans **Paramètres → Sites** ; fichier transparent prioritaire, affiché au-dessus d'ARCenal Matos, avec adaptation du texte sombre pour le thème sombre.
+
+L'assistance est activable dans **Paramètres → Agent & MCP** après configuration du secret MCP. Elle ne lance pas Hermès : l'agent connecté doit traiter les demandes via `list_intake_requests`, lire contexte/photo avec `read_intake_request`, puis répondre par `complete_intake_request`. Le YAML exporté contient ces instructions. Une photo nécessite un modèle capable de vision ; une périodicité inconnue reste vide, une justification est requise. Les images restent privées dans les médias de l'instance et sont exposées à l'agent authentifié via MCP.
+
+Le formulaire attend la réponse et recopie série/périodicité sans remplacer une saisie modifiée entre-temps. L'enregistrement final de la fiche reste humain. Aucun fournisseur d'IA externe n'est appelé directement par Matos.
+
 - Rôles et rattachements multisites, droits contrôlés côté serveur et documents privés.
 - Inventaire matériel, champs personnalisés, affectations, QR/Code128 et scan caméra embarqué sans CDN.
 - Prêts internes avec validation humaine, demandes intersites si équivalent local indisponible, état/photos à la sortie et au retour, transferts.

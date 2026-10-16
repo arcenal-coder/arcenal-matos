@@ -27,6 +27,7 @@ from .import_export import HEADERS, csv_bytes, import_csv, report
 from .models import (
     Allocation,
     Asset,
+    AssistanceSettings,
     Category,
     Document,
     Event,
@@ -54,7 +55,7 @@ def context(request):
         "setup-new": "settings", "setup-edit": "settings",
     }
     data = {"app_version": VERSION, "release_label": RELEASE_LABEL, "active_navigation": navigation.get(page, page),
-            "has_company_logo": branding.has_logo()}
+            "has_company_logo": branding.has_logo(), "company_logo_version": branding.logo_version()}
     if not request.user.is_authenticated:
         return data
     return data | {"unread": Notification.objects.filter(user=request.user, read_at__isnull=True).count(),
@@ -88,7 +89,7 @@ def logout_view(request):
 def company_logo(request):
     if not branding.has_logo():
         return HttpResponse(status=404)
-    response = FileResponse((branding.directory() / "logo.png").open("rb"), content_type="image/png")
+    response = HttpResponse(branding.dark_logo(), content_type="image/png") if request.GET.get("mode") == "dark" else FileResponse(branding.logo_path().open("rb"), content_type="image/png")
     response["Cache-Control"] = "public, max-age=300"
     return response
 
@@ -205,12 +206,14 @@ def asset_edit(request, pk=None):
                     item = form.save()
                     services.audit(request.user, "asset.created", item)
             messages.success(request, "Fiche enregistrée")
-            return redirect("asset", pk=item.pk)
+            return redirect("inventory")
         except ValidationError as exc:
             form.add_error(None, exc)
         except IntegrityError:
-            form.add_error("code", "Cet identifiant vient d'être utilisé par une autre fiche.")
-    return render(request, "form.html", {"form": form, "title": "Modifier le matériel" if pk else "Ajouter du matériel"})
+            form.add_error(None, "Une autre fiche vient d’être enregistrée avec cette référence. Réessayez l’enregistrement.")
+    return render(request, "asset_form.html", {"form": form, "asset": item,
+        "assistance_enabled": bool(settings.MCP_TOKEN) and AssistanceSettings.objects.filter(pk=1, enabled=True).exists(),
+        "title": "Modifier le matériel" if pk else "Ajouter du matériel"})
 
 
 @login_required
@@ -459,14 +462,21 @@ def setup(request, kind, pk=None):
         else:
             item = form.save()
             services.audit(request.user, f"{kind}.saved", details={"id": item.pk})
-            return redirect("suppliers" if kind == "supplier" else "settings")
-    return render(request, "form.html", {"form": form, "title": title})
+            if kind == "supplier":
+                return redirect("suppliers")
+            return redirect("settings-section", section={"user": "users", "site": "sites", "category": "categories"}[kind])
+    return render(request, "form.html", {"form": form, "title": title,
+        "cancel_url": reverse("suppliers") if kind == "supplier" else reverse("settings-section", args=[{"user": "users", "site": "sites", "category": "categories"}[kind]])})
 
 
 @login_required
-def settings_view(request):
+def settings_view(request, section=None):
     require(request.user, ("admin",))
-    return render(request, "settings.html", {"users": User.objects.exclude(role="agent").select_related("site").prefetch_related("managed_sites"),
+    if section not in (None, "users", "sites", "categories"):
+        return HttpResponse(status=404)
+    titles = {None: "Paramètres", "users": "Gestion des utilisateurs", "sites": "Sites", "categories": "Catégories & périodicités"}
+    return render(request, "settings.html", {"section": section, "title": titles[section],
+                                            "users": User.objects.exclude(role="agent").select_related("site").prefetch_related("managed_sites"),
                                             "sites": Site.objects.all(), "categories": Category.objects.all()})
 
 
@@ -594,18 +604,25 @@ def agent_yaml():
     from mcp.types import LATEST_PROTOCOL_VERSION
     return {"schema": "arcenal-agent-link", "schema_version": 1, "application": "arcenal-matos",
         "agent_profile": {"name": "logisticien-arcenal-matos", "role": "logisticien", "instructions":
-            "Gérer la logistique sur tous les sites. Utiliser les outils MCP. Réservations, demandes fournisseurs et remises en service : validation humaine obligatoire."},
+            "Gérer la logistique sur tous les sites. Utiliser les outils MCP. Traiter régulièrement list_intake_requests : lire le contexte et la photo avec read_intake_request, reconnaître le numéro de série et proposer la périodicité avec complete_intake_request en expliquant sa source. Ne rien inventer si l'image est illisible ou la périodicité inconnue. Réservations, demandes fournisseurs et remises en service : validation humaine obligatoire."},
         "mcp": {"endpoint": settings.PUBLIC_URL + "/mcp", "transport": "streamable-http", "protocol_version": LATEST_PROTOCOL_VERSION,
                 "authentication": {"mode": "bearer", "credential_ref": "MATOS_MCP_TOKEN", "header": "Authorization"}},
         "access": {"sites": "all", "capabilities": ["assets.read", "assets.update_allowed_fields", "assignments.manage",
             "loans.record_approved_checkout", "loans.record_return", "transfers.manage", "maintenance.plan_and_record",
-            "supplier_requests.prepare", "reminders.send", "reports.generate"],
+             "supplier_requests.prepare", "reminders.send", "reports.generate", "intake.assist"],
             "human_only": ["reservations.approve", "supplier_requests.approve", "assets.return_to_service"]}}
 
 
 @login_required
 def integration(request):
     require(request.user, ("admin",))
+    if request.method == "POST":
+        config, _ = AssistanceSettings.objects.get_or_create(pk=1)
+        config.enabled = bool(settings.MCP_TOKEN) and request.POST.get("assistance_enabled") == "on"
+        config.save()
+        services.audit(request.user, "agent.assistance_configured", details={"enabled": config.enabled})
+        messages.success(request, "Paramètres de l’agent enregistrés.")
+        return redirect("integration")
     data = agent_yaml()
     if request.GET.get("download"):
         services.audit(request.user, "agent.yaml_exported")
@@ -613,4 +630,5 @@ def integration(request):
         response["Content-Disposition"] = 'attachment; filename="arcenal-matos-logisticien.yaml"'
         return response
     return render(request, "integration.html", {"yaml": yaml.safe_dump(data, sort_keys=False, allow_unicode=True),
-        "endpoint": data["mcp"]["endpoint"], "mcp_configured": bool(settings.MCP_TOKEN)})
+        "endpoint": data["mcp"]["endpoint"], "mcp_configured": bool(settings.MCP_TOKEN),
+        "assistance_enabled": AssistanceSettings.objects.filter(pk=1, enabled=True).exists()})

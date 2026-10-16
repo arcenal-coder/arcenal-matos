@@ -97,7 +97,7 @@ test('État erreur en clair et sombre, formulaire accessible et version RC visib
   for (const mode of ['light', 'dark']) {
     await page.getByLabel('Apparence').selectOption(mode);
     await page.goto('/assets/new/');
-    await page.locator('main form').evaluate(form => { form.noValidate = true; });
+    await page.locator('#asset-form').evaluate(form => { form.noValidate = true; });
     await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
     await expect(page.locator('.errorlist').first()).toBeVisible();
     await expect(page.locator('footer')).toContainText(version);

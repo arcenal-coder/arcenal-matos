@@ -9,12 +9,12 @@ async function login(page, label) {
 test('Confirmation d’annulation : fermer le dialogue conserve la réservation', async ({ page }) => {
   await login(page, 'Gestionnaire Siège — Gestionnaire');
   await page.goto('/assets/new/');
-  await page.locator('[name=code]').fill('RC-CANCEL');
   await page.locator('[name=name]').fill('Matériel confirmation RC');
   await page.locator('[name=category]').selectOption({ label: 'Matériel général' });
   await page.locator('[name=site]').selectOption({ label: 'Siège (essai)' });
-  await page.locator('[name=custom_fields]').fill('{}');
   await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
+  await expect(page).toHaveURL(/\/inventory\/$/);
+  await page.getByRole('link', { name: /Matériel confirmation RC/ }).click();
   const url = new URL(page.url()).pathname;
   await page.getByRole('button', { name: 'Déconnexion' }).click();
   await login(page, "Collaborateur d'essai — Collaborateur");

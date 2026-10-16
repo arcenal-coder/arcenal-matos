@@ -5,6 +5,18 @@ Date : 2026-10-15.
 
 ## Contrôles locaux
 
+### Lot saisie simplifiée / Paramètres — développement local du 15 octobre 2026
+
+- RÉUSSI : **71 tests backend**, dont identifiant automatique, clés conservées à l'édition, deux créations concurrentes sans doublon, références marque/modèle, alerte « filips / Philips », droits des rôles, demandes privées et orientation EXIF des photos.
+- RÉUSSI : **19 parcours Chromium** sur une exécution complète ; après adaptation du logo au sombre, les 11 scénarios impactés ont été rejoués avec succès (thèmes/accessibilité, paramètres, références et assistance).
+- RÉUSSI : client MCP officiel → demande de saisie → lecture du contexte et image PNG → réponse série/périodicité persistée, sans créer/modifier de fiche à la place de l'humain. Le retour agent dans le navigateur est simulé ; le transport MCP est exercé réellement dans les tests backend.
+- RÉUSSI : logo téléversable par l'administrateur, transparence conservée, logo au-dessus du titre et lisible en sombre ; boutons espacés, retour inventaire pour Enregistrer/Annuler et absence de JSON dans le formulaire.
+- RÉUSSI : ruff, syntaxe JS, compilation Python, Django check et cohérence des migrations.
+- RÉUSSI : migrations additives 0005/0006 appliquées localement après sauvegarde hors Git ; inventaire avant/après identique (0 fiche), anciens libellés conservés par la migration de référentiels.
+- RÉUSSI : aperçu local redémarré, smoke HTTP/YAML/PDF/MCP, 17 outils MCP ; médias des tests navigateur isolés de l'instance locale.
+- NON_EXÉCUTÉ : agent Hermès réel/vision réelle, validation métier des périodicités suggérées, installation/upgrade YunoHost avec ces nouvelles migrations. Le paquet Store reste à la révision qualifiée précédente.
+- Modifications de ce lot non publiées ; aucune connexion au serveur distant demandée/effectuée.
+
 ### Correctif local prioritaire du 15 octobre 2026 (après publication)
 
 - Portée cliente : application prévue pour LDAP/SSO YunoHost et saisie/suivi du matériel ; aucun raccordement distant demandé.

@@ -400,10 +400,12 @@ class Screens(Fixtures, TestCase):
             "site": self.site.pk, "state": "available", "custom_fields": "{}",
         }, headers={"YNH-USER": self.manager.username})
         self.assertEqual(response.status_code, 302)
-        item = await Asset.objects.aget(code="SSO-1")
+        self.assertEqual(response.url, "/inventory/")
+        item = await Asset.objects.aget(name="Matériel saisi via SSO")
+        self.assertTrue(item.code.startswith("ORDINATEURS-"))
         self.assertEqual(item.site_id, self.site.pk)
         self.assertTrue(await Event.objects.filter(action="asset.created", actor=self.manager).aexists())
-        detail = await client.get(response.url, headers={"YNH-USER": self.manager.username})
+        detail = await client.get(reverse("asset", args=[item.pk]), headers={"YNH-USER": self.manager.username})
         self.assertContains(detail, "Matériel saisi via SSO")
         self.assertEqual((await client.get("/")).status_code, 302)
 

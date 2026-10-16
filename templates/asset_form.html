@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% load static %}{% block content %}
+<div class="pagehead"><div><span class="eyebrow">INVENTAIRE</span><h1>{{ title }}</h1><p>Renseignez le matériel. Les informations complémentaires sont facultatives.</p></div></div>
+<section class="card narrow">
+<p class="notice">{% if asset %}Identifiant : <strong>{{ asset.code }}</strong> · conservé pour le suivi.{% else %}L’identifiant sera attribué automatiquement selon le type d’appareil à l’enregistrement.{% endif %}</p>
+<form id="asset-form" method="post" data-reference-base="/intake/references/" data-assistance-url="{% url 'intake-assistance' %}" data-result-base="/intake/assistance/">
+{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form.primary_fields %}
+<div class="field">{{ field.label_tag }}
+{% if field.name == 'category' or field.name == 'brand' or field.name == 'model' %}
+<div class="input-with-action">{{ field }}<button class="secondary" type="button" data-add-reference="{{ field.name }}">+ Ajouter {% if field.name == 'category' %}une catégorie{% elif field.name == 'brand' %}une marque{% else %}un modèle{% endif %}</button></div>
+{% else %}{{ field }}{% endif %}
+{{ field.errors }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+</div>{% endfor %}
+<section class="intake-assistance" aria-labelledby="assistance-title"><h2 id="assistance-title">Assistance à la saisie</h2>
+{% if assistance_enabled %}
+<p>Ajoutez une photo de la plaque signalétique : l’agent connecté pourra lire le numéro de série et renseigner la périodicité de contrôle. Vous pouvez aussi demander la périodicité sans photo.</p>
+<div class="field"><label for="serial-photo">Photo du numéro de série (facultative)</label><input id="serial-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"></div>
+<button type="button" class="secondary" id="request-assistance">Demander à l’agent</button>
+{% else %}<p>La lecture du numéro de série sur photo et l’aide à la périodicité seront disponibles lorsqu’un agent sera activé dans Paramètres → Agent & MCP. Vous pouvez tout saisir manuellement.</p>{% endif %}
+<p id="assistance-status" role="status" aria-live="polite"></p></section>
+<details id="asset-details" {% if form.errors %}open{% endif %}><summary>Achat et contrôles (facultatif)</summary>
+{% for field in form.detail_fields %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</div>{% endfor %}
+</details>
+<div class="actions form-actions"><button type="submit">Enregistrer</button><a class="button secondary" href="{% url 'inventory' %}">Annuler</a></div>
+</form></section>
+<dialog id="reference-dialog" aria-labelledby="reference-title"><form id="reference-form">
+<h2 id="reference-title">Ajouter une référence</h2><div class="field"><label for="reference-name">Nom de la référence</label><input id="reference-name" name="reference_name" maxlength="120" required autocomplete="off"></div>
+<p id="reference-error" role="status"></p><div id="reference-suggestions" class="actions"></div>
+<div class="actions"><button type="submit">Ajouter à la liste</button><button type="button" class="secondary" id="reference-cancel">Annuler</button></div>
+</form></dialog>
+{% endblock %}{% block scripts %}<script src="{% static 'intake.js' %}" defer></script>{% endblock %}

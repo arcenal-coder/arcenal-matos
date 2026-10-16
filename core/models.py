@@ -1,3 +1,4 @@
+import unicodedata
 import uuid
 from datetime import timedelta
 
@@ -6,6 +7,11 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models, transaction
 from django.utils import timezone
+from django.utils.text import slugify
+
+
+def reference_key(value):
+    return " ".join(unicodedata.normalize("NFKC", value).casefold().split())
 
 
 class Site(models.Model):
@@ -50,6 +56,60 @@ class Category(models.Model):
             super().save(*args, **kwargs)
 
 
+class AssetSequence(models.Model):
+    category = models.OneToOneField(Category, primary_key=True, on_delete=models.CASCADE)
+    last_number = models.PositiveBigIntegerField(default=0)
+
+
+class Brand(models.Model):
+    name = models.CharField("Marque", max_length=100)
+    key = models.CharField(max_length=200, unique=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(self.name.split())
+        self.key = reference_key(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class DeviceModel(models.Model):
+    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="models")
+    name = models.CharField("Modèle", max_length=100)
+    key = models.CharField(max_length=200, editable=False)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["brand", "key"], name="unique_brand_model")]
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(self.name.split())
+        self.key = reference_key(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class AssistanceSettings(models.Model):
+    enabled = models.BooleanField("Activer l’assistance à la saisie par l’agent MCP", default=False)
+
+
+class IntakeRequest(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    requested_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    name = models.CharField(max_length=200, blank=True)
+    brand = models.CharField(max_length=100, blank=True)
+    model = models.CharField(max_length=100, blank=True)
+    photo = models.ImageField(upload_to="intake/%Y/%m/", blank=True)
+    status = models.CharField(max_length=16, default="pending", choices=[("pending", "En attente"), ("done", "Traitée")])
+    serial = models.CharField(max_length=120, blank=True)
+    interval_days = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1)])
+    explanation = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Asset(models.Model):
     STATES = [("available", "Disponible"), ("maintenance", "En maintenance"),
               ("damaged", "Endommagé"), ("lost", "Perdu"), ("retired", "Retiré du parc")]
@@ -76,6 +136,22 @@ class Asset(models.Model):
                                                validators=[MinValueValidator(1)])
     custom_fields = models.JSONField("Champs personnalisés (JSON)", default=dict, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.code:
+            return super().save(*args, **kwargs)
+        with transaction.atomic():
+            category = Category.objects.select_for_update().get(pk=self.category_id)
+            sequence, _ = AssetSequence.objects.get_or_create(category=category)
+            # The category id disambiguates identical/truncated type labels.
+            prefix = (slugify(category.name).upper().replace("-", "")[:12] or "MAT") + f"-{category.pk}"
+            while True:
+                sequence.last_number += 1
+                self.code = f"{prefix}-{sequence.last_number:06d}"
+                if not Asset.objects.filter(code=self.code).exists():
+                    break
+            sequence.save(update_fields=["last_number"])
+            return super().save(*args, **kwargs)
 
     @property
     def control_due(self):

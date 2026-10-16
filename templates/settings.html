@@ -1,1 +1,32 @@
-{% extends 'base.html' %}{% block content %}<h1>Organisation & profils</h1><p>Les comptes proviennent de YunoHost. Attribuez ici leurs rôles et leurs sites.</p><section class="card"><div class="sectionhead"><h2>Utilisateurs</h2><span class="muted">Synchronisation LDAP sur YunoHost</span></div>{% for item in users %}<a class="listrow" href="{% url 'setup-edit' 'user' item.pk %}"><span><strong>{{ item }}</strong><small>{{ item.username }} · {{ item.get_role_display }} · {{ item.site|default:'Sans rattachement' }}</small><small>Sites gérés : {% for site in item.managed_sites.all %}{{ site }} {% endfor %}</small></span><span>Configurer →</span></a>{% endfor %}</section><div class="grid"><section class="card"><div class="sectionhead"><h2>Sites</h2><a href="{% url 'setup-new' 'site' %}">+ Ajouter</a></div>{% for item in sites %}<a class="listrow" href="{% url 'setup-edit' 'site' item.pk %}">{{ item }}<small>{{ item.address }}</small></a>{% empty %}<p>Aucun site.</p>{% endfor %}</section><section class="card"><div class="sectionhead"><h2>Catégories & périodicités</h2><a href="{% url 'setup-new' 'category' %}">+ Ajouter</a></div>{% for item in categories %}<a class="listrow" href="{% url 'setup-edit' 'category' item.pk %}">{{ item }}<small>Contrôle tous les {{ item.interval_days|default:'—' }} jours</small></a>{% empty %}<p>Aucune catégorie.</p>{% endfor %}</section></div>{% endblock %}
+{% extends 'base.html' %}{% block content %}
+<div class="pagehead"><div><span class="eyebrow">PARAMÈTRES</span><h1>{{ title }}</h1></div></div>
+{% if not section %}
+<section class="card"><h2>Configurer Matos</h2><div class="actions">
+  <a class="button secondary" href="{% url 'integration' %}">Agent & MCP</a>
+  <a class="button secondary" href="{% url 'settings-section' 'users' %}">Gestion des utilisateurs</a>
+  <a class="button secondary" href="{% url 'settings-section' 'sites' %}">Sites</a>
+  <a class="button secondary" href="{% url 'settings-section' 'categories' %}">Catégories & périodicités</a>
+</div></section>
+{% endif %}
+{% if section == 'users' %}
+<p>Les comptes proviennent du LDAP de YunoHost et se connectent par son SSO. Attribuez ici leurs rôles et leurs sites.</p>
+<section class="card"><h2>Utilisateurs</h2>{% for item in users %}
+<a class="listrow" href="{% url 'setup-edit' 'user' item.pk %}"><span><strong>{{ item }}</strong><small>{{ item.username }} · {{ item.get_role_display }} · {{ item.site|default:'Sans rattachement' }}</small><small>Sites gérés : {% for site in item.managed_sites.all %}{{ site }} {% endfor %}</small></span><span>Configurer →</span></a>
+{% empty %}<p>Aucun compte synchronisé.</p>{% endfor %}</section>
+{% endif %}
+{% if section == 'sites' %}
+<section class="card"><div class="sectionhead"><h2>Sites de l’organisation</h2><a class="button" href="{% url 'setup-new' 'site' %}">+ Ajouter</a></div>
+{% for item in sites %}<a class="listrow" href="{% url 'setup-edit' 'site' item.pk %}">{{ item }}<small>{{ item.address }}</small></a>{% empty %}<p>Aucun site.</p>{% endfor %}</section>
+{% endif %}
+{% if section == 'categories' %}
+<section class="card"><div class="sectionhead"><h2>Types d’appareils et contrôles</h2><a class="button" href="{% url 'setup-new' 'category' %}">+ Ajouter</a></div>
+{% for item in categories %}<a class="listrow" href="{% url 'setup-edit' 'category' item.pk %}">{{ item }}<small>Contrôle tous les {{ item.interval_days|default:'—' }} jours</small></a>{% empty %}<p>Aucune catégorie.</p>{% endfor %}</section>
+{% endif %}
+{% if not section or section == 'sites' %}
+<section class="card narrow"><h2>Logo de la société</h2><p>Le logo apparaît au-dessus d’ARCenal Matos. Utilisez un PNG transparent pour un logo détouré. À défaut, Matos reprend le logo du portail YunoHost.</p>
+{% if has_company_logo %}<img class="company-logo" src="{% url 'company-logo' %}?v={{ company_logo_version }}" alt="Logo de la société">{% endif %}
+<form method="post" enctype="multipart/form-data" action="{% url 'upload-logo' %}">{% csrf_token %}
+<div class="field"><label for="company-logo-file">Choisir le logo</label><input id="company-logo-file" type="file" name="logo" accept="image/png,image/jpeg,image/webp" required></div>
+<div class="actions"><button type="submit">Enregistrer le logo</button></div></form></section>
+{% endif %}
+{% endblock %}

@@ -1,4 +1,5 @@
 import base64
+import json
 from datetime import date
 from decimal import Decimal
 from functools import wraps
@@ -8,10 +9,12 @@ from asgiref.sync import sync_to_async
 from django.db import close_old_connections, connections
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
+from mcp.types import ImageContent, TextContent
 
 from . import services
 from .import_export import report
-from .models import Asset, Site, Supplier, User
+from .intake import assistance_enabled
+from .models import Asset, IntakeRequest, Site, Supplier, User
 from .permissions import require
 
 
@@ -44,6 +47,49 @@ def build_server(hosts, origins):
                     connections.close_all()
             return await sync_to_async(execute, thread_sensitive=True)()
         return server.tool()(invoke)
+
+    @tool
+    def list_intake_requests() -> dict:
+        """Demandes de saisie à traiter : reconnaissance photo et périodicité, si assistance activée."""
+        agent()
+        if not assistance_enabled():
+            return {"enabled": False, "items": []}
+        return {"enabled": True, "items": [{"id": str(item.pk), "name": item.name, "category": item.category.name,
+            "brand": item.brand, "model": item.model, "has_photo": bool(item.photo)}
+            for item in IntakeRequest.objects.filter(status="pending").select_related("category").order_by("created_at")[:50]]}
+
+    @tool
+    def read_intake_request(request_id: str) -> list:
+        """Lire contexte et image privée pour reconnaître la série et rechercher la périodicité. Ne rien inventer."""
+        agent()
+        if not assistance_enabled():
+            raise ValueError("Assistance désactivée.")
+        item = IntakeRequest.objects.select_related("category").get(pk=request_id)
+        content = [TextContent(type="text", text=json.dumps({"id": str(item.pk), "name": item.name,
+            "category": item.category.name, "brand": item.brand, "model": item.model,
+            "category_interval_days": item.category.interval_days}, ensure_ascii=False))]
+        if item.photo:
+            with item.photo.open("rb") as photo:
+                content.append(ImageContent(type="image", mimeType="image/png", data=base64.b64encode(photo.read()).decode()))
+        return content
+
+    @tool
+    def complete_intake_request(request_id: str, explanation: str, serial: str = "", interval_days: int | None = None) -> dict:
+        """Répondre à une demande de saisie. Série vide si illisible, période nulle si inconnue ; citer source/contexte."""
+        from django.db import transaction
+        actor = agent()
+        if not assistance_enabled():
+            raise ValueError("Assistance désactivée.")
+        with transaction.atomic():
+            item = IntakeRequest.objects.select_for_update().get(pk=request_id)
+            if item.status == "done":
+                return {"id": str(item.pk), "status": item.status}
+            if not explanation.strip() or len(explanation) > 4000 or len(serial) > 120 or (interval_days is not None and not 1 <= interval_days <= 36500):
+                raise ValueError("Réponse invalide : justification requise, série <= 120 caractères, période entre 1 et 36500 jours.")
+            item.serial, item.interval_days, item.explanation, item.status = serial.strip(), interval_days, explanation, "done"
+            item.save(update_fields=["serial", "interval_days", "explanation", "status"])
+            services.audit(actor, "intake.completed", details={"request": str(item.pk)})
+        return {"id": str(item.pk), "status": item.status}
 
     @tool
     def list_assets(query: str = "", site_id: int | None = None, offset: int = 0) -> dict:

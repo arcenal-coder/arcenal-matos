@@ -12,7 +12,7 @@
 <a class="skip-link" href="#main-content">Aller au contenu</a>
 <aside class="sidebar">
   <div class="brand-row">
-    <a class="brand {% if has_company_logo %}with-company-logo{% endif %}" href="{% url 'dashboard' %}">{% if has_company_logo %}<img class="company-logo" src="{% url 'company-logo' %}" alt="Logo de la société">{% else %}<span class="logo" aria-hidden="true">A</span>{% endif %}<span>ARCenal <strong>Matos</strong><small>Gestion des actifs</small></span></a>
+    <a class="brand {% if has_company_logo %}with-company-logo{% endif %}" href="{% url 'dashboard' %}">{% if has_company_logo %}<picture><source id="company-logo-dark" media="(prefers-color-scheme: dark)" srcset="{% url 'company-logo' %}?mode=dark&amp;v={{ company_logo_version }}"><img class="company-logo" src="{% url 'company-logo' %}?v={{ company_logo_version }}" alt="Logo de la société"></picture>{% else %}<span class="logo" aria-hidden="true">A</span>{% endif %}<span>ARCenal <strong>Matos</strong><small>Gestion des actifs</small></span></a>
     {% if user.is_authenticated %}<button id="nav-toggle" class="nav-toggle secondary" type="button" aria-expanded="false" aria-controls="main-navigation">Menu</button>{% endif %}
   </div>
   {% if user.is_authenticated %}
@@ -33,9 +33,13 @@
     {% endif %}
     <a href="{% url 'notifications' %}" {% if active_navigation == 'notifications' %}aria-current="page"{% endif %}><span aria-hidden="true">◉</span> Notifications {% if unread %}<span class="badge">{{ unread }}</span>{% endif %}</a>
     {% if is_admin_profile %}
-    <div class="navlabel">Administration</div>
-    <a href="{% url 'settings' %}" {% if active_navigation == 'settings' %}aria-current="page"{% endif %}><span aria-hidden="true">⚑</span> Organisation & profils</a>
-    <a href="{% url 'integration' %}" {% if active_navigation == 'integration' %}aria-current="page"{% endif %}><span aria-hidden="true">✧</span> Agent & MCP</a>
+    <details class="settings-menu" open>
+      <summary>Paramètres</summary>
+      <a href="{% url 'integration' %}" {% if active_navigation == 'integration' %}aria-current="page"{% endif %}>Agent & MCP</a>
+      <a href="{% url 'settings-section' 'users' %}" {% if section == 'users' %}aria-current="page"{% endif %}>Gestion des utilisateurs</a>
+      <a href="{% url 'settings-section' 'sites' %}" {% if section == 'sites' %}aria-current="page"{% endif %}>Sites</a>
+      <a href="{% url 'settings-section' 'categories' %}" {% if section == 'categories' %}aria-current="page"{% endif %}>Catégories & périodicités</a>
+    </details>
     {% endif %}
   </nav>
   <div class="sidefoot"><span class="dot" aria-hidden="true"></span> {{ release_label }} · auto-hébergée</div>

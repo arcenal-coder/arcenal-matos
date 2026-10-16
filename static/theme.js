@@ -12,8 +12,14 @@
   document.addEventListener('DOMContentLoaded', () => {
     const choice = document.getElementById('theme-choice');
     choice.value = root.dataset.theme;
+    function updateLogo() {
+      const source = document.getElementById('company-logo-dark');
+      if (source) source.media = root.dataset.theme === 'dark' ? 'all' : root.dataset.theme === 'light' ? 'not all' : '(prefers-color-scheme: dark)';
+    }
+    updateLogo();
     choice.addEventListener('change', () => {
       root.dataset.theme = choice.value;
+      updateLogo();
       try { localStorage.setItem(key, choice.value); } catch { /* Keep the choice for this page. */ }
     });
     const button = document.getElementById('nav-toggle');
