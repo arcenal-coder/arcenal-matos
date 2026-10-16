@@ -1,8 +1,9 @@
-# ARCenal Matos 0.1.2~ynh1 — candidate preview
+# ARCenal Matos 0.1.2~ynh1 — preview qualifiée
 
 - Application : évolutions Paramètres/saisie, identifiants automatiques et migrations 0005/0006.
-- À REVALIDER : package_check complet et mise à jour depuis la version publiée 0.1.1~ynh5 (révision b8ef047930d7c64944b83a485c2c8f13dd414794).
-- Cause du message défectueux : niveau 0 publié dans le catalogue ARCenal ; YunoHost exige un niveau >= 5 pour annoncer une mise à jour. Correction du catalogue après qualification technique de la candidate, sans revendication d'une note officielle communautaire.
+- RÉUSSI : package_check 38850600554, six scénarios dont mise à jour depuis la version publiée 0.1.1~ynh5 ; paquet figé à 3d882348b212835d9adc61c54416ad72a6185c04.
+- Cause du message défectueux : niveau 0 publié dans le catalogue ARCenal ; YunoHost exige un niveau >= 5 pour annoncer une mise à jour. Correction publiée avec qualification technique ARCenal 5, distincte du résultat officiel original 0 conservé dans les preuves.
+- RÉUSSI : cinq tests du vérificateur, 18 tests catalogue ; PR #16 fusionnée, flux brut et Pages vérifiés en 0.1.2~ynh1/niveau 5/working.
 
 ## Preuves historiques 0.1.1~ynh5
 
