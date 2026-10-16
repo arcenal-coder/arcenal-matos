@@ -1,0 +1,7 @@
+{% extends 'epi/base.html' %}{% block epi_content %}
+<div class="pagehead"><div><h1>Gestion des EPI</h1><p>Stocks, dotations et validités de vos sites, séparés de l’inventaire matériel.</p></div><a class="button" href="{% url 'epi:receipt' %}">Réceptionner des EPI</a></div>
+<div class="stats"><div class="stat"><strong>{{ stock_lots }}</strong>Lots en stock</div><div class="stat"><strong>{{ active_allocations }}</strong>Dotations actives</div><div class="stat"><strong>{{ pending_requests }}</strong>Demandes à traiter</div><div class="stat"><strong>{{ expired_allocations }}</strong>Dotations expirées</div></div>
+<div class="grid"><section class="card"><h2>Valeur du stock HT</h2><p class="money">{{ stock_value.total|floatformat:2 }} €</p><p>{{ stock_value.unknown }} lot(s) sans prix renseigné. La valeur porte sur les prix connus, y compris les EPI expirés encore en stock.</p></section>
+<section class="card"><h2>Coûts historiques HT</h2><dl><dt>EPI remis</dt><dd>{{ issued_value.total|floatformat:2 }} € · {{ issued_value.unknown }} remise(s) sans prix</dd><dt>EPI détruits</dt><dd>{{ destroyed_value.total|floatformat:2 }} € · {{ destroyed_value.unknown }} destruction(s) sans prix</dd></dl><p>Ces indicateurs décrivent des mouvements différents : une destruction peut concerner un EPI déjà remis.</p></section></div>
+<div class="actions"><a class="button secondary" href="{% url 'epi:catalogue' %}">Gérer les références EPI</a><a class="button secondary" href="{% url 'epi:requests' %}">Traiter les demandes</a></div>
+{% endblock %}

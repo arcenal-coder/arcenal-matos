@@ -1,0 +1,3 @@
+{% extends 'epi/base.html' %}{% block epi_content %}<h1>Historique EPI</h1>
+<section class="card">{% for item in items %}<div class="listrow"><div><strong>{{ item.action }}</strong><small>{{ item.reference }} · {{ item.site|default:'Catalogue commun' }} · {{ item.actor }} · {{ item.created_at|date:'d/m/Y H:i' }}</small>{% if item.details.quantity %}<p>Quantité : {{ item.details.quantity }}</p>{% endif %}{% if item.details.reason %}<p>{{ item.details.reason }}</p>{% endif %}</div></div>{% empty %}<p>Aucun mouvement EPI.</p>{% endfor %}</section>
+{% include 'epi/pagination.html' %}{% endblock %}

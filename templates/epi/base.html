@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}EPI · ARCenal Matos{% endblock %}
+{% block content %}
+<div class="eyebrow">MODULE EPI · ÉQUIPEMENTS DE PROTECTION INDIVIDUELLE</div>
+<nav class="module-tabs" aria-label="Module EPI">
+{% if epi_staff %}
+<a href="{% url 'epi:index' %}" {% if epi_page == 'overview' %}aria-current="page"{% endif %}>Vue d’ensemble</a>
+<a href="{% url 'epi:stock' %}" {% if epi_page == 'stock' %}aria-current="page"{% endif %}>Stock & validités</a>
+{% endif %}
+<a href="{% url 'epi:catalogue' %}" {% if epi_page == 'catalogue' %}aria-current="page"{% endif %}>Catalogue EPI</a>
+<a href="{% url 'epi:requests' %}" {% if epi_page == 'requests' %}aria-current="page"{% endif %}>{% if epi_staff %}Demandes{% else %}Mes demandes{% endif %}</a>
+<a href="{% url 'epi:my-equipment' %}" {% if epi_page == 'mine' %}aria-current="page"{% endif %}>Mes EPI</a>
+{% if epi_staff %}
+<a href="{% url 'epi:distributed' %}" {% if epi_page == 'distributed' %}aria-current="page"{% endif %}>Distribués</a>
+<a href="{% url 'epi:destroyed' %}" {% if epi_page == 'destroyed' %}aria-current="page"{% endif %}>Détruits</a>
+<a href="{% url 'epi:proposals' %}" {% if epi_page == 'validity' %}aria-current="page"{% endif %}>Validités IA</a>
+<a href="{% url 'epi:history' %}" {% if epi_page == 'history' %}aria-current="page"{% endif %}>Historique</a>
+{% endif %}</nav>
+{% block epi_content %}{% endblock %}
+{% endblock %}

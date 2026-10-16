@@ -18,7 +18,7 @@ dist = root / "dist"
 dist.mkdir(exist_ok=True)
 version = runpy.run_path(str(root / "matos/version.py"))["VERSION"]
 source = dist / f"arcenal-matos-{version}.tar.gz"
-allowed = ["manage.py", "LICENSE", "requirements.txt", "requirements-dev.txt", "pyproject.toml", "README.md", "TEST_REPORT.md", "matos", "core",
+allowed = ["manage.py", "LICENSE", "requirements.txt", "requirements-dev.txt", "pyproject.toml", "README.md", "TEST_REPORT.md", "RELEASE_NOTES.md", "matos", "core", "epi", "dosimetry",
            "templates", "static", "frontend", "scripts", "tests", "playwright.config.js", "package.json", "package-lock.json", "packaging"]
 if not args.source_url or not source.exists():
     with tarfile.open(source, "w:gz") as archive:

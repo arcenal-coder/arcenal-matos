@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block title %}Dosimètres passifs · ARCenal Matos{% endblock %}
+{% block content %}<div class="eyebrow">MODULE DOSIMÈTRES PASSIFS · LOGISTIQUE UNIQUEMENT</div>
+<nav class="module-tabs" aria-label="Module Dosimètres">
+{% if dosimetry_staff %}<a href="{% url 'dosimetry:index' %}" {% if dosimetry_page == 'overview' %}aria-current="page"{% endif %}>Vue d’ensemble</a><a href="{% url 'dosimetry:badges' %}" {% if dosimetry_page == 'badges' %}aria-current="page"{% endif %}>Badges</a>{% endif %}
+<a href="{% url 'dosimetry:mine' %}" {% if dosimetry_page == 'mine' %}aria-current="page"{% endif %}>Mes badges</a>
+{% if dosimetry_staff %}<a href="{% url 'dosimetry:operation' 'collection' %}" {% if dosimetry_page == 'collection' %}aria-current="page"{% endif %}>Collecte</a><a href="{% url 'dosimetry:shipments' %}" {% if dosimetry_page == 'shipments' or dosimetry_page == 'shipment' %}aria-current="page"{% endif %}>Envois laboratoire</a><a href="{% url 'dosimetry:assistance' %}" {% if dosimetry_page == 'assistance' %}aria-current="page"{% endif %}>Assistant IA</a><a href="{% url 'dosimetry:history' %}" {% if dosimetry_page == 'history' %}aria-current="page"{% endif %}>Historique</a>{% endif %}
+{% if is_admin_profile %}<a href="{% url 'dosimetry:configuration' 'laboratories' %}" {% if dosimetry_page == 'laboratories' %}aria-current="page"{% endif %}>Laboratoires</a><a href="{% url 'dosimetry:configuration' 'periods' %}" {% if dosimetry_page == 'periods' %}aria-current="page"{% endif %}>Périodes de port</a>{% endif %}
+</nav>{% block dosimetry_content %}{% endblock %}{% endblock %}

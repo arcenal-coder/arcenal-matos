@@ -22,7 +22,7 @@ MCP_ALLOWED_HOSTS = os.environ.get("MATOS_MCP_ALLOWED_HOSTS", "127.0.0.1,localho
 MCP_ALLOWED_ORIGINS = os.environ.get("MATOS_MCP_ALLOWED_ORIGINS", "http://127.0.0.1,http://localhost,http://127.0.0.1:*,http://localhost:*").split(",")
 INSTALLED_APPS = [
     "django.contrib.auth", "django.contrib.contenttypes", "django.contrib.sessions",
-    "django.contrib.messages", "django.contrib.staticfiles", "core",
+    "django.contrib.messages", "django.contrib.staticfiles", "core", "epi", "dosimetry",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware", "django.contrib.sessions.middleware.SessionMiddleware",

@@ -1,0 +1,8 @@
+{% extends 'dosimetry/base.html' %}{% load static %}{% block dosimetry_content %}
+<h1>{{ title }}</h1><p>Confirmez uniquement les badges et la date de l’opération réellement effectuée.</p>
+{% if task %}<p class="notice">Préparation de l’agent pour {{ task.site }} · {{ task.period }}. Vérifiez la sélection avant confirmation.</p>{% else %}<section class="card narrow"><form method="get">{% for field in scope_form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<button type="submit">Afficher les badges du site et de la période</button></form></section>{% endif %}
+{% if site and period %}<p>{{ site }} · {{ period }}</p>{% endif %}
+<section class="card"><form method="post">{% csrf_token %}{{ form.non_field_errors }}<div class="actions"><button type="button" class="secondary" data-check-badges="true">Tout sélectionner</button><button type="button" class="secondary" data-check-badges="false">Tout désélectionner</button></div>
+{% for field in form %}{% if field.name == 'badges' %}<fieldset class="field"><legend>{{ field.label }}</legend>{{ field }}{{ field.errors }}</fieldset>{% else %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endif %}{% endfor %}
+<div class="actions form-actions"><button type="submit">Confirmer {% if dosimetry_page == 'collection' %}la collecte{% else %}l’expédition{% endif %}</button><a class="button secondary" href="{{ cancel_url }}">Annuler</a></div></form></section>
+{% endblock %}{% block scripts %}<script src="{% static 'dosimetry.js' %}" defer></script>{% endblock %}

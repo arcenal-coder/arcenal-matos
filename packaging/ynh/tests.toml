@@ -10,6 +10,7 @@ test_format = 1.0
     """
 
     test_upgrade_from.b8ef047930d7c64944b83a485c2c8f13dd414794.name = "Mise à jour depuis 0.1.1~ynh5 (catalogue publié)"
+    test_upgrade_from.3d882348b212835d9adc61c54416ad72a6185c04.name = "Mise à jour depuis 0.1.2~ynh1 (version distribuée)"
 
     [default.curl_tests]
     dashboard.logged_on_sso = true
@@ -20,3 +21,16 @@ test_format = 1.0
     anonymous.path = "/login/"
     anonymous.expect_return_code = 401
     anonymous.expect_title = "ARCenal Matos"
+
+    epi.path = "/epi/"
+    epi.logged_on_sso = true
+    epi.expect_title = "EPI.*ARCenal Matos"
+    epi.expect_content = "Gestion des EPI"
+
+    modules.path = "/settings/modules/"
+    modules.logged_on_sso = true
+    modules.expect_content = "Activer le module Dosimètres passifs"
+
+    disabled_dosimeters.path = "/dosimeters/"
+    disabled_dosimeters.logged_on_sso = true
+    disabled_dosimeters.expect_return_code = 404

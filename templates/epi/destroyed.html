@@ -1,0 +1,5 @@
+{% extends 'epi/base.html' %}{% block epi_content %}
+<div class="pagehead"><div><h1>EPI détruits</h1><p>Sorties définitives du stock ou d’une dotation, avec date, motif et coût historique.</p></div></div>
+<section class="card tablecard"><div class="tablewrap"><table><thead><tr><th>EPI / lot</th><th>Origine</th><th>Quantité</th><th>Date</th><th>Motif</th><th>Auteur</th><th>Coût HT</th></tr></thead><tbody>
+{% for item in items %}<tr><td>{{ item.lot.reference }}<small>{{ item.lot.number }} · {{ item.lot.site }}{% if item.unit_id %} · {{ item.unit.code }}{% endif %}</small></td><td>{% if item.allocation_id %}Dotation de {{ item.allocation.recipient }}{% else %}Stock non distribué{% endif %}</td><td>{{ item.quantity }} {{ item.lot.reference.get_unit_display|lower }}(s)</td><td>{{ item.destroyed_on|date:'d/m/Y' }}</td><td>{{ item.reason }}</td><td>{{ item.actor }}</td><td>{% if item.cost != None %}{{ item.cost|floatformat:2 }} €{% else %}Non renseigné{% endif %}</td></tr>{% empty %}<tr><td colspan="7">Aucune destruction enregistrée.</td></tr>{% endfor %}</tbody></table></div></section>
+{% include 'epi/pagination.html' %}{% endblock %}

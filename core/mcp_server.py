@@ -208,4 +208,8 @@ def build_server(hosts, origins):
         return {"filename": f"inventaire-audit.{format}", "mime_type": mime,
                 "encoding": "base64", "data": base64.b64encode(data).decode()}
 
+    from epi.mcp import register_tools
+    register_tools(tool, agent)
+    from dosimetry.mcp import register_tools as register_dosimetry_tools
+    register_dosimetry_tools(tool, agent)
     return server

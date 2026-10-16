@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block content %}
+<div class="pagehead"><div><span class="eyebrow">PARAMÈTRES</span><h1>Modules</h1><p>Activez uniquement les fonctions utiles à votre organisation.</p></div></div>
+<section class="card narrow"><form method="post">{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+<p>Un module désactivé disparaît des menus ; ses accès directs, opérations et nouveaux rappels sont bloqués. Ses données et son historique restent conservés et seront retrouvés à la réactivation. Les notifications déjà reçues ne sont pas supprimées.</p>
+<div class="actions form-actions"><button type="submit">Enregistrer</button><a class="button secondary" href="{% url 'settings' %}">Annuler</a></div></form></section>
+{% endblock %}

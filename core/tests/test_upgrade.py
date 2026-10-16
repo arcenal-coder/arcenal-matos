@@ -9,9 +9,9 @@ from django.test import TransactionTestCase, override_settings
 class UpgradeFromPublishedSchema(TransactionTestCase):
     def test_existing_assets_documents_and_keys_survive_reference_migrations(self):
         old = ("core", "0004_asset_control_hold")
-        target = ("core", "0006_seed_device_references")
-        self.addCleanup(lambda: MigrationExecutor(connection).migrate([target]))
         executor = MigrationExecutor(connection)
+        targets = executor.loader.graph.leaf_nodes()
+        self.addCleanup(lambda: MigrationExecutor(connection).migrate(targets))
         executor.migrate([old])
         apps = executor.loader.project_state([old]).apps
         site = apps.get_model("core", "Site").objects.create(name="Site existant")
@@ -22,7 +22,7 @@ class UpgradeFromPublishedSchema(TransactionTestCase):
         with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory):
             document = apps.get_model("core", "Document").objects.create(asset=asset, uploaded_by=user, name="preuve.txt")
             document.file.save("preuve.txt", ContentFile(b"existing-private-document"))
-            MigrationExecutor(connection).migrate([target])
+            MigrationExecutor(connection).migrate(targets)
             from core.models import Asset, Brand, DeviceModel, Document
             item = Asset.objects.get(pk=asset.pk)
             self.assertEqual((item.code, item.brand, item.model, item.serial), ("LEGACY-42", "Philips", "MX40", "SN-42"))

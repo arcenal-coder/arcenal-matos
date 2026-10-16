@@ -22,7 +22,7 @@ with tarfile.open(source) as archive:
         if parts[-1] == ".env":
             assert member.name.endswith("packaging/ynh/conf/.env")
             assert b"MATOS_MCP_TOKEN=__MCP_TOKEN__" in archive.extractfile(member).read()
-    for expected in ("manage.py", "core/services.py", "matos/asgi.py", "matos/version.py", "static/theme.js", "static/app.css",
+    for expected in ("manage.py", "RELEASE_NOTES.md", "core/services.py", "core/migrations/0007_modulesettings.py", "epi/services.py", "epi/models.py", "epi/migrations/0001_initial.py", "templates/epi/base.html", "dosimetry/services.py", "dosimetry/migrations/0001_initial.py", "templates/dosimetry/base.html", "matos/asgi.py", "matos/version.py", "static/theme.js", "static/app.css",
                      "static/fonts/inter-latin-400-normal.woff2", "static/scan.bundle.js", "static/THIRD_PARTY_NOTICES.txt"):
         assert any(name.endswith("/" + expected) for name in names)
 with tarfile.open(root / "dist" / f"arcenal-matos-ynh-template-{version}.tar.gz") as archive:

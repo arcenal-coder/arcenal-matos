@@ -1,0 +1,6 @@
+{% extends 'epi/base.html' %}{% block epi_content %}
+<div class="pagehead"><div><h1>Stock & validités EPI</h1><p>Les quantités en stock n’incluent pas les EPI déjà remis ou détruits.</p></div><a class="button" href="{% url 'epi:receipt' %}">Réceptionner des EPI</a></div>
+<section class="card tablecard"><div class="tablewrap"><table><thead><tr><th>EPI / lot</th><th>Site</th><th>En stock</th><th>Validité</th><th>Prix unitaire HT</th><th>Valeur HT</th><th>Actions</th></tr></thead><tbody>
+{% for item in items %}<tr><td><a href="{% url 'epi:lot' item.pk %}">{{ item.reference }}</a><small>Lot {{ item.number }} · reçu le {{ item.received_on|date:'d/m/Y' }}</small></td><td>{{ item.site }}</td><td>{{ item.available_quantity }} {{ item.reference.get_unit_display|lower }}(s)</td><td>{% if item.expired %}<span class="badge">Expiré</span>{% endif %}{{ item.valid_until|date:'d/m/Y'|default:'Non renseignée' }}</td><td>{% if item.unit_price != None %}{{ item.unit_price|floatformat:2 }} €{% else %}Non renseigné{% endif %}</td><td>{% if item.stock_value != None %}{{ item.stock_value|floatformat:2 }} €{% else %}Non renseignée{% endif %}</td><td><a href="{% url 'epi:lot' item.pk %}">Ouvrir le lot</a></td></tr>
+{% empty %}<tr><td colspan="7">Aucun lot EPI reçu.</td></tr>{% endfor %}</tbody></table></div></section>
+{% include 'epi/pagination.html' %}{% endblock %}

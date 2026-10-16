@@ -19,6 +19,8 @@
   <nav id="main-navigation" aria-label="Navigation principale">
     <a href="{% url 'dashboard' %}" {% if active_navigation == 'dashboard' %}aria-current="page"{% endif %}><span aria-hidden="true">◈</span> Tableau de bord</a>
     <a href="{% url 'inventory' %}" {% if active_navigation == 'inventory' %}aria-current="page"{% endif %}><span aria-hidden="true">▣</span> Inventaire</a>
+    {% if is_epi_user %}<a href="{% url 'epi:index' %}" {% if epi_page %}aria-current="page"{% endif %}><span aria-hidden="true">◉</span> EPI</a>{% endif %}
+    {% if is_dosimeter_user %}<a href="{% url 'dosimetry:index' %}" {% if dosimetry_page %}aria-current="page"{% endif %}><span aria-hidden="true">◈</span> Dosimètres</a>{% endif %}
     <a href="{% url 'reservations' %}" {% if active_navigation == 'reservations' %}aria-current="page"{% endif %}><span aria-hidden="true">⇄</span> Demandes & prêts</a>
     <a href="{% url 'scan' %}" {% if active_navigation == 'scan' %}aria-current="page"{% endif %}><span aria-hidden="true">⌗</span> Scanner</a>
     {% if is_staff_profile %}
@@ -39,6 +41,7 @@
       <a href="{% url 'settings-section' 'users' %}" {% if section == 'users' %}aria-current="page"{% endif %}>Gestion des utilisateurs</a>
       <a href="{% url 'settings-section' 'sites' %}" {% if section == 'sites' %}aria-current="page"{% endif %}>Sites</a>
       <a href="{% url 'settings-section' 'categories' %}" {% if section == 'categories' %}aria-current="page"{% endif %}>Catégories & périodicités</a>
+      <a href="{% url 'module-settings' %}" {% if request.resolver_match.url_name == 'module-settings' %}aria-current="page"{% endif %}>Modules</a>
     </details>
     {% endif %}
   </nav>

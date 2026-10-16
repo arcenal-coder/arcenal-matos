@@ -95,6 +95,11 @@ class AssistanceSettings(models.Model):
     enabled = models.BooleanField("Activer l’assistance à la saisie par l’agent MCP", default=False)
 
 
+class ModuleSettings(models.Model):
+    epi_enabled = models.BooleanField("Activer le module EPI", default=True)
+    dosimeters_enabled = models.BooleanField("Activer le module Dosimètres passifs", default=False)
+
+
 class IntakeRequest(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     requested_by = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -307,6 +312,7 @@ class Event(models.Model):
             "report.generated": "Rapport généré", "reminders.generated": "Rappels préparés", "agent.yaml_exported": "Liaison YAML exportée",
             "site.saved": "Site enregistré", "category.saved": "Catégorie enregistrée", "user.saved": "Profil attribué",
             "supplier.saved": "Fournisseur enregistré",
+            "modules.configured": "Activation des modules modifiée",
         }
         return labels.get(self.action, self.action)
 

@@ -22,7 +22,7 @@ from reportlab.graphics.barcode import createBarcodeDrawing
 
 from matos.version import RELEASE_LABEL, VERSION
 
-from . import branding, forms, services
+from . import branding, forms, modules, services
 from .import_export import HEADERS, csv_bytes, import_csv, report
 from .models import (
     Allocation,
@@ -58,7 +58,10 @@ def context(request):
             "has_company_logo": branding.has_logo(), "company_logo_version": branding.logo_version()}
     if not request.user.is_authenticated:
         return data
+    preferences = modules.preferences()
     return data | {"unread": Notification.objects.filter(user=request.user, read_at__isnull=True).count(),
+                   "is_epi_user": request.user.role in ("admin", "manager", "member") and preferences.epi_enabled,
+                   "is_dosimeter_user": request.user.role in ("admin", "manager", "member") and preferences.dosimeters_enabled,
                    "is_staff_profile": request.user.role in ("admin", "manager"),
                    "is_manager": request.user.role == "manager", "is_admin_profile": request.user.role == "admin"}
 
@@ -481,6 +484,20 @@ def settings_view(request, section=None):
 
 
 @login_required
+def module_settings(request):
+    require(request.user, ("admin",))
+    config = modules.preferences()
+    form = forms.ModuleSettingsForm(request.POST if request.method == "POST" else None, instance=config)
+    if request.method == "POST" and form.is_valid():
+        with transaction.atomic():
+            config = form.save()
+            services.audit(request.user, "modules.configured", details={"epi": config.epi_enabled, "dosimeters": config.dosimeters_enabled})
+        messages.success(request, "Activation des modules enregistrée. Les données existantes sont conservées.")
+        return redirect("module-settings")
+    return render(request, "modules.html", {"form": form})
+
+
+@login_required
 def csv_import(request):
     require(request.user, ("admin", "manager"))
     if request.GET.get("template"):
@@ -602,15 +619,23 @@ def journal(request):
 
 def agent_yaml():
     from mcp.types import LATEST_PROTOCOL_VERSION
+    preferences = modules.preferences()
+    instructions = ["Gérer la logistique sur tous les sites. Utiliser les outils MCP. Traiter list_intake_requests avec read_intake_request et complete_intake_request pour photo/série/périodicité, en expliquant la source. Ne rien inventer si l'image est illisible ou la périodicité inconnue. Réservations, demandes fournisseurs et remises en service : validation humaine obligatoire."]
+    capabilities = ["assets.read", "assets.update_allowed_fields", "assignments.manage", "loans.record_approved_checkout", "loans.record_return", "transfers.manage", "maintenance.plan_and_record", "supplier_requests.prepare", "reminders.send", "reports.generate", "intake.assist"]
+    human_only = ["reservations.approve", "supplier_requests.approve", "assets.return_to_service"]
+    if preferences.epi_enabled:
+        instructions.append("Traiter list_epi_validity_requests, lire read_epi_validity_request, proposer via propose_epi_validity avec source fabricant. Ne jamais prolonger une limite fabricant ; indiquer les données manquantes. Application de validité, validation, remise et destruction EPI restent humaines.")
+        capabilities.append("epi.validity.propose")
+        human_only.extend(["epi.requests.approve", "epi.issue", "epi.destroy", "epi.validity.apply"])
+    if preferences.dosimeters_enabled:
+        instructions.append("Assister le gestionnaire des dosimètres PASSIFS : list_dosimetry_assistance, read_dosimetry_assistance puis propose_dosimetry_logistics. Repérer retards et badges manquants, proposer préaffectations ou listes de collecte/envoi. Ne pas inventer de badge ou personne. Un humain confirme toute préaffectation et toute opération physique. Aucun résultat de dose.")
+        capabilities.append("dosimetry.logistics.prepare")
+        human_only.extend(["dosimetry.preassign", "dosimetry.issue", "dosimetry.collect", "dosimetry.send", "dosimetry.close"])
     return {"schema": "arcenal-agent-link", "schema_version": 1, "application": "arcenal-matos",
-        "agent_profile": {"name": "logisticien-arcenal-matos", "role": "logisticien", "instructions":
-            "Gérer la logistique sur tous les sites. Utiliser les outils MCP. Traiter régulièrement list_intake_requests : lire le contexte et la photo avec read_intake_request, reconnaître le numéro de série et proposer la périodicité avec complete_intake_request en expliquant sa source. Ne rien inventer si l'image est illisible ou la périodicité inconnue. Réservations, demandes fournisseurs et remises en service : validation humaine obligatoire."},
+        "agent_profile": {"name": "logisticien-arcenal-matos", "role": "logisticien", "instructions": " ".join(instructions)},
         "mcp": {"endpoint": settings.PUBLIC_URL + "/mcp", "transport": "streamable-http", "protocol_version": LATEST_PROTOCOL_VERSION,
-                "authentication": {"mode": "bearer", "credential_ref": "MATOS_MCP_TOKEN", "header": "Authorization"}},
-        "access": {"sites": "all", "capabilities": ["assets.read", "assets.update_allowed_fields", "assignments.manage",
-            "loans.record_approved_checkout", "loans.record_return", "transfers.manage", "maintenance.plan_and_record",
-             "supplier_requests.prepare", "reminders.send", "reports.generate", "intake.assist"],
-            "human_only": ["reservations.approve", "supplier_requests.approve", "assets.return_to_service"]}}
+                 "authentication": {"mode": "bearer", "credential_ref": "MATOS_MCP_TOKEN", "header": "Authorization"}},
+        "access": {"sites": "all", "capabilities": capabilities, "human_only": human_only}}
 
 
 @login_required

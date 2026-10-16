@@ -1,8 +1,58 @@
-# ARCenal Matos · 0.1.2 — preview
+# ARCenal Matos · 0.2.0 — preview
 
 Application web responsive de gestion interne des actifs, Django/PostgreSQL, MCP intégré et liaison YAML pour un agent logisticien créé dans Hermès.
 
 Logiciel propriétaire — conditions dans LICENSE. Distribution destinée au canal preview d'ARCenal Store avant qualification sur chaque serveur client.
+
+La version 0.2.0 ajoute les modules EPI et Dosimètres passifs, activables indépendamment. Sa finalisation et sa publication preview sont autorisées par le client ; la qualification de mise à jour depuis **0.1.2~ynh1** est exigée avant promotion. Les nouveautés, premières étapes et procédure de retour arrière sont dans [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
+## Paramètres → Modules
+
+L'administrateur choisit **Activer le module EPI** et **Activer le module Dosimètres passifs**. EPI est actif par défaut pour conserver le comportement existant ; Dosimètres est initialement désactivé.
+
+Désactiver un module masque ses menus et bloque ses accès directs, mutations, fonctions MCP et nouveaux rappels. Les données, stocks, dotations, badges, historiques et notifications déjà reçues restent conservés. La réactivation retrouve les mêmes données et reprend les fonctions et rappels ; l'autre module et l'inventaire matériel ne sont pas affectés.
+
+## Module Dosimètres passifs
+
+Ce module gère **la logistique uniquement**. Les dosimètres opérationnels restent dans l'inventaire matériel ; aucun résultat de dose n'est enregistré ou calculé.
+
+1. Activer Dosimètres dans **Paramètres → Modules**. L'administrateur configure ensuite les **Laboratoires** et **Périodes de port** (début, fin, échéance de retour). Le calendrier n'est pas limité à une fréquence fixe.
+2. Le gestionnaire réceptionne les badges du site et de la période, avec un numéro par ligne. Un numéro est unique dans sa période/laboratoire et peut être réutilisé sur une autre période. Badges personnels et témoins sont distingués.
+3. Préaffecter et distribuer les badges personnels aux équipiers éligibles du site ; une préaffectation existante n'est pas remplacée par une remise à une autre personne. Un témoin reste lié au site et n'a pas de bénéficiaire individuel.
+4. Enregistrer les collectes/restitutions, puis les envois groupés au laboratoire par site et période avec date réelle et référence de suivi. Les badges restés en stock peuvent être collectés et retournés en étant signalés **non portés**.
+5. Déclarer pertes ou annulations avec motif ; un remplacement possède un autre numéro et reste lié au badge d'origine. Les remises, collectes et envois peuvent être repris à leurs dates passées réelles, dans l'ordre chronologique.
+6. L'équipier consulte uniquement **Mes badges**, leurs périodes, échéances et retours. Les gestionnaires ne gèrent que leurs sites. Les retards et badges collectés à expédier produisent des notifications internes dédupliquées.
+
+### Rôle de l'agent IA
+
+Après activation de l'assistance dans **Agent & MCP** et connexion de l'agent, le gestionnaire demande une aide dans **Dosimètres → Assistant IA** : faire le point, proposer des préaffectations, préparer une collecte ou un envoi.
+
+L'agent utilise `list_dosimetry_assistance`, `read_dosimetry_assistance` et `propose_dosimetry_logistics`. Il dispose du contexte du site/période, des badges et équipiers éligibles, sans résultat de dose. Les propositions sont persistées mais ne distribuent, collectent ou expédient rien. Le gestionnaire confirme les préaffectations, ou utilise les listes précochées dans les formulaires d'opération réelle. Chaque préparation est revérifiée au moment de la confirmation. L'agent ne peut pas déclarer une perte/annulation ni inventer une correspondance numéro/porteur manquante.
+
+## Module EPI séparé
+
+Le menu **EPI** ouvre son propre catalogue, stock, demandes, dotations, destructions et historique. Les comptes LDAP/SSO et les sites de Matos sont partagés ; les EPI ne sont pas des fiches de l'inventaire matériel général.
+
+### Commencer
+
+1. Gestionnaire ou administrateur : **EPI → Catalogue EPI → Ajouter une référence EPI**. Renseigner type, taille/pointure, unité (pièce, paire ou boîte) et suivi par quantités/lots ou exemplaires individuels. La durée après première mise en service est facultative et doit correspondre aux indications du fabricant.
+2. **Stock & validités → Réceptionner des EPI** : choisir site, lot, quantité, date de réception, limite fabricant et prix d'achat unitaire HT. Un prix inconnu reste vide. Les identifiants individuels sont automatiques ; les numéros de série peuvent être ajoutés à la réception ou sur l'exemplaire.
+3. L'équipier utilise **Mes demandes** pour demander une référence/taille/quantité. Le gestionnaire accepte ou refuse, puis enregistre la remise physique, totale ou partielle. L'acceptation seule ne retire rien du stock.
+4. **Distribués** présente les remises et les quantités encore détenues. **Mes EPI** expose seulement les dotations personnelles. Les coûts et le stock des autres sites restent protégés côté serveur.
+5. Une destruction s'enregistre depuis un lot ou une dotation, avec date, quantité/exemplaire et motif. Elle est définitive et journalisée ; les EPI détruits ne retournent pas au stock.
+
+Pour reprendre des équipements déjà distribués, enregistrer la réception d'origine (quantité et date réelles), puis les remises à leurs dates réelles. Le stock final correspond alors aux quantités encore disponibles ; aucun stock fictif n'est ajouté automatiquement.
+
+### Validité, prix et agent
+
+- La validité est la plus proche des limites renseignées : date fabricant, date retenue et durée d'usage après première mise en service. La date de première mise en service d'un exemplaire n'est pas réinitialisable par une remise. Les EPI expirés à la date de remise sont bloqués ; une validité inconnue est explicitement indiquée.
+- Les dates/durées peuvent être complétées dans le lot ou sur un exemplaire, sans modifier son identifiant, son stock, son prix historique ou sa première mise en service. Les modifications sont tracées.
+- Les prix d'achat HT sont mémorisés à la remise et à la destruction. La vue d'ensemble distingue valorisation du stock, coûts historiques des remises et des destructions ; les prix inconnus ne sont pas assimilés à des achats à 0 €.
+- Le traitement périodique produit des notifications **internes**, dédupliquées, pour les échéances à moins de 30 jours et les EPI expirés. Aucun envoi e-mail EPI supplémentaire n'est créé.
+- Après activation de l'assistance dans **Paramètres → Agent & MCP**, demander une proposition depuis un lot, un exemplaire ou **Validités IA**. L'agent lit le type d'EPI et ses informations fabricant via `list_epi_validity_requests` / `read_epi_validity_request`, puis répond par `propose_epi_validity` avec source et explication. Les informations manquantes sont signalées ; aucune date précise n'est admise sans point de départ connu.
+- Le gestionnaire applique ou écarte la proposition sur son lot/exemplaire. La durée commune d'une référence est modifiable uniquement par l'administrateur. Une proposition ne prolonge jamais la limite fabricant connue ; l'agent ne peut ni valider une demande, ni distribuer, ni détruire un EPI.
+
+La V1 n'inclut pas le reconditionnement/retour d'EPI usagés, les transferts intersites, les achats/comptabilité complète ou la signature électronique de remise. La proposition IA n'est pas une certification réglementaire.
 
 ## Installation YunoHost
 
@@ -75,9 +125,9 @@ L'agent peut gérer fiches/affectations, sorties après validation humaine, reto
 
 ```sh
 .venv/bin/ruff check .
-MATOS_DEBUG=1 .venv/bin/python -m compileall -q core matos scripts
+MATOS_DEBUG=1 .venv/bin/python -m compileall -q core epi dosimetry matos scripts
 MATOS_DEBUG=1 .venv/bin/python manage.py check
-MATOS_DEBUG=1 .venv/bin/python manage.py test core.tests --noinput
+MATOS_DEBUG=1 .venv/bin/python manage.py test core.tests epi.tests dosimetry.tests --noinput
 npm run build
 npm run test:browser
 ```

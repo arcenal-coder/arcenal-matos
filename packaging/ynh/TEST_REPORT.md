@@ -1,4 +1,13 @@
-# ARCenal Matos 0.1.2~ynh1 — preview qualifiée
+# ARCenal Matos — qualification de distribution
+
+## Candidate finale 0.2.0 / modules activables
+
+- Candidate 0.2.0, manifest 0.2.0~ynh1 : EPI, Dosimètres passifs et réglages de modules ; migrations additives epi.0001, core.0007 et dosimetry.0001.
+- RÉUSSI : tests locaux, archives de développement et présence des apps/migrations dans les sources.
+- RÉUSSI : 119 tests backend et 25 parcours navigateur sur la version figée ; notes de version et retour arrière documentés.
+- À QUALIFIER : cycle de vie YunoHost 0.2.0 et upgrade depuis 0.1.2 avant publication du catalogue preview, autorisée par le client.
+
+## Historique 0.1.2~ynh1 — preview qualifiée
 
 - Application : évolutions Paramètres/saisie, identifiants automatiques et migrations 0005/0006.
 - RÉUSSI : package_check 38850600554, six scénarios dont mise à jour depuis la version publiée 0.1.1~ynh5 ; paquet figé à 3d882348b212835d9adc61c54416ad72a6185c04.

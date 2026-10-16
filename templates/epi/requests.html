@@ -1,0 +1,4 @@
+{% extends 'epi/base.html' %}{% block epi_content %}
+<div class="pagehead"><div><h1>{% if epi_staff %}Demandes EPI{% else %}Mes demandes EPI{% endif %}</h1><p>Une demande acceptée ne sort du stock qu’à la remise physique.</p></div><a class="button" href="{% url 'epi:request-new' %}">Demander un EPI</a></div>
+<section class="card">{% for item in items %}<a class="listrow" href="{% url 'epi:request' item.pk %}"><span><strong>{{ item.reference }}</strong><small>{{ item.quantity }} demandé(s) · {{ item.fulfilled_quantity }} remis · {{ item.remaining }} restant(s)</small>{% if epi_staff %}<small>{{ item.requester }} · {{ item.site }}</small>{% endif %}</span><span>{{ item.get_status_display }} →</span></a>{% empty %}<p>Aucune demande EPI.</p>{% endfor %}</section>
+{% include 'epi/pagination.html' %}{% endblock %}

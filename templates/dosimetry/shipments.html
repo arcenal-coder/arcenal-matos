@@ -1,0 +1,4 @@
+{% extends 'dosimetry/base.html' %}{% block dosimetry_content %}
+<div class="pagehead"><div><h1>Envois au laboratoire</h1><p>Liste des expéditions confirmées, par site et période.</p></div><a class="button" href="{% url 'dosimetry:operation' 'shipment' %}">Préparer un envoi</a></div>
+<section class="card">{% for item in items %}<a class="listrow" href="{% url 'dosimetry:shipment' item.pk %}"><span><strong>Envoi n° {{ item.pk }} · {{ item.period.laboratory }}</strong><small>{{ item.site }} · {{ item.period.name }} · {{ item.sent_on|date:'d/m/Y' }}</small><small>{{ item.tracking|default:'Sans référence de suivi' }}</small></span><span>Ouvrir →</span></a>{% empty %}<p>Aucun envoi confirmé.</p>{% endfor %}</section>{% include 'dosimetry/pagination.html' %}
+{% endblock %}

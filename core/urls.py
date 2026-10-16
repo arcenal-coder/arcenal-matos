@@ -22,6 +22,7 @@ urlpatterns = [
     path("licenses/<int:pk>/allocate/", views.license_allocate, name="license-allocate"),
     path("settings/", views.settings_view, name="settings"), path("setup/<str:kind>/", views.setup, name="setup-new"),
     path("settings/logo/", intake.upload_logo, name="upload-logo"),
+    path("settings/modules/", views.module_settings, name="module-settings"),
     path("settings/<str:section>/", views.settings_view, name="settings-section"),
     path("intake/references/<str:kind>/", intake.references, name="intake-reference"),
     path("intake/assistance/", intake.request_assistance, name="intake-assistance"),

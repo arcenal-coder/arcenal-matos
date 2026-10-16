@@ -1,0 +1,7 @@
+{% extends 'epi/base.html' %}{% block epi_content %}
+<div class="pagehead"><div><h1>{{ title }}</h1>{% if help_text %}<p>{{ help_text }}</p>{% endif %}</div></div>
+{% if lot %}<p class="notice">{{ lot.site }} · lot {{ lot.number }} · {{ lot.available_quantity }} {{ lot.reference.get_unit_display|lower }}(s) en stock. Validité : {{ lot.valid_until|date:'d/m/Y'|default:'non renseignée' }}.</p>{% endif %}
+<section class="card narrow"><form method="post">{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}{% if field.help_text %}<small id="{{ field.auto_id }}_helptext">{{ field.help_text }}</small>{% endif %}</div>{% endfor %}
+<div class="actions form-actions"><button type="submit">Enregistrer</button><a class="button secondary" href="{{ cancel_url }}">Annuler</a></div>
+</form></section>{% endblock %}

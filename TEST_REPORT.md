@@ -1,7 +1,39 @@
-# Rapport de contrôle — ARCenal Matos 0.1.2 preview
+# Rapport de contrôle — ARCenal Matos 0.2.0 preview
 
-Statut : distribution preview, SSO/branding de production configurés ; recette réelle de plateforme à effectuer.
+Statut : candidate finale 0.2.0, publication preview autorisée ; qualification YunoHost en cours avant promotion.
 Date : 2026-10-16.
+
+## Finalisation 0.2.0
+
+- Le client confirme « Oui, finaliser et publier » : source immuable, paquet, qualification puis catalogue preview autorisés.
+- Versions application/JavaScript/manifest synchronisées ; notes de version et procédure de sauvegarde/restauration fournies.
+- RÉUSSI sur 0.2.0 : ruff, compilation, Django check/migrations, pip check, 119 tests backend et 25 parcours Chromium, build scanner. Cycle de vie YunoHost et upgrade depuis 0.1.2~ynh1 encore à qualifier avant promotion.
+- Tests de paquet enrichis avec le module EPI actif, la page Modules, et le refus d'accès Dosimètres lorsqu'il est inactif initialement.
+
+## Dosimètres passifs et activation des modules
+
+- Périmètre client validé : badges passifs, logistique seulement, témoins, périodes, réception, préaffectation/distribution, collecte, envoi, perte/remplacement, assistance IA ; dosimètres opérationnels dans le matériel général.
+- RÉUSSI : **119 tests backend** (95 précédents + 5 d'activation et 19 dosimètres) ; droits par rôle/site, numéros par période, séquence des dates, badges témoins/non portés, historique et absence de résultats de dose.
+- RÉUSSI : activation indépendante et désactivation simultanée, pages et mutations bloquées, données EPI/badges conservées à réactivation, rappels suspendus et YAML limité aux modules actifs ; lecture MCP Dosimètres bloquée après désactivation pendant une vraie session SDK.
+- RÉUSSI : PostgreSQL concurrent sur double réception d'un numéro, double remise et double expédition ; un seul badge / mouvement / colis confirmé.
+- RÉUSSI : agent MCP officiel → lecture du contexte → préparation de préaffectation persistée sans mouvement physique ; confirmation humaine distincte. Préparation d'envoi revalidée à confirmation ; réponses visant un autre site ou des badges inéligibles refusées.
+- RÉUSSI : **25 parcours navigateur**, dont interrupteurs, conservation des références EPI, réception/distribution/collecte/envoi/perte/remplacement, vue personnelle, témoin, assistance en attente et axe clair/ordinateur + sombre/mobile.
+- RÉUSSI : ruff, syntaxe JavaScript, compilation, Django check et cohérence des migrations ; migration locale core.0007 + dosimetry.0001 après sauvegarde, empreintes du matériel et des EPI identiques avant/après ; aucun badge fictif ajouté.
+- Réglages initiaux : EPI actif et Dosimètres inactif, activation réservée à l'administrateur. 23 outils MCP enregistrés, gardes dynamiques sur les fonctions des modules désactivés.
+- NON_EXÉCUTÉ : agent Hermès réel, flux avec un laboratoire réel, recette métier et cycle de vie YunoHost de cette version ; aucune publication automatique du développement.
+
+## Module EPI — développement local vérifié
+
+- Périmètre validé par le client : module séparé, suivi mixte, péremption fabricant et durée après mise en service, demandes, distributions, destructions, prix HT privés et propositions de validité IA.
+- RÉUSSI : **95 tests backend**, dont 23 tests EPI : séparation de l'inventaire général, 20 paires reçues / 3 remises / 17 en stock, remises partielles, coûts historiques, quantités détruites et droits par rôle/site.
+- RÉUSSI : concurrence réelle PostgreSQL sur remises, réception de deux exemplaires individuels, double remise du même exemplaire et conflit remise/destruction ; aucun stock négatif ni double attribution.
+- RÉUSSI : dates fabricant/durée première mise en service, refus d'une remise expirée et dates futures incohérentes, reprise de remises anciennes, date initiale non réinitialisable et notifications internes dédupliquées.
+- RÉUSSI : transport MCP officiel → contexte EPI → réponse source/date/durée → proposition persistée sans modifier le stock → application humaine par HTTP. Date dépassant la limite fabricant ou dépourvue de point de départ refusée ; réponse inconnue non transformée en validité inventée.
+- RÉUSSI : **22 scénarios navigateur**, incluant lots/demandes/remise/destruction/prix privés, exemplaires/série/expiration/remise passée, validité manuelle, demande IA en attente et contrôle axe sur les écrans EPI en clair/ordinateur et sombre/mobile.
+- RÉUSSI : ruff, compilation, cohérence des migrations, génération/vérification d'une archive de développement incluant l'app `epi` et sa migration.
+- RÉUSSI : sauvegarde locale avant migration `epi.0001_initial`, migration additive, empreinte d'inventaire général avant/après identique et aucun EPI fictif ajouté. Version distincte 0.2.0-dev.1 pour préserver les archives publiées 0.1.2.
+- NON_EXÉCUTÉ : inférence par un agent Hermès réel, validation des sources fabricant sur les EPI réels du client, recette métier cliente et cycle de vie YunoHost incluant ce nouveau module.
+- Aucune publication GitHub/Store de ce module ni connexion au serveur client dans ce lot ; la version distribuée du catalogue reste 0.1.2~ynh1.
 
 ## Publication corrective 0.1.2
 

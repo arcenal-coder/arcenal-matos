@@ -1,0 +1,7 @@
+{% extends 'epi/base.html' %}{% block epi_content %}
+<div class="pagehead"><div><h1>Catalogue EPI</h1><p>Une référence correspond à un EPI, sa taille et son mode de suivi.</p></div>{% if epi_staff %}<a class="button" href="{% url 'epi:reference-new' %}">Ajouter une référence EPI</a>{% else %}<a class="button" href="{% url 'epi:request-new' %}">Demander un EPI</a>{% endif %}</div>
+<form method="get" class="filters"><label for="epi-search">Rechercher un type, un nom ou une taille</label><input id="epi-search" name="q" value="{{ request.GET.q }}"><button type="submit">Rechercher</button></form>
+<section class="card">{% for item in items %}<div class="listrow"><div><strong>{{ item }}</strong><small>{{ item.kind }} · {{ item.get_tracking_display }} · {{ item.get_unit_display }}</small><small>{{ item.brand }} {{ item.model }} · Durée après mise en service : {% if item.usage_days %}{{ item.usage_days }} jours{% else %}non renseignée{% endif %}</small></div>
+<div class="actions">{% if epi_staff %}<a href="{% url 'epi:receipt' %}?reference={{ item.pk }}">Réceptionner</a><a href="{% url 'epi:proposal-new' %}?reference={{ item.pk }}">Proposer la validité par IA</a>{% if is_admin_profile %}<a href="{% url 'epi:reference-edit' item.pk %}">Modifier</a>{% endif %}{% endif %}<a href="{% url 'epi:request-new' %}?reference={{ item.pk }}">Demander</a></div></div>
+{% empty %}<p>Aucune référence EPI. {% if epi_staff %}Commencez par ajouter un type et une taille.{% endif %}</p>{% endfor %}</section>
+{% include 'epi/pagination.html' %}{% endblock %}

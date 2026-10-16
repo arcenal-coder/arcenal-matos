@@ -36,9 +36,9 @@ jobs:
           cache: npm
       - run: python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
       - run: npm ci && npm run build
-      - run: .venv/bin/ruff check . && .venv/bin/python -m compileall -q core matos scripts
+      - run: .venv/bin/ruff check . && .venv/bin/python -m compileall -q core epi dosimetry matos scripts
       - run: .venv/bin/python manage.py check && .venv/bin/python manage.py makemigrations --check --dry-run
-      - run: .venv/bin/python manage.py test core.tests --noinput
+      - run: .venv/bin/python manage.py test core.tests epi.tests dosimetry.tests --noinput
       - run: mkdir -p .local && npx playwright install --with-deps chromium
       - run: npm run test:browser
       - run: .venv/bin/python scripts/build_beta.py && .venv/bin/python scripts/verify_artifacts.py

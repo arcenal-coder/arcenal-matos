@@ -7,6 +7,8 @@
 {% if not mcp_configured %}<p>Configurez d’abord le secret technique du serveur MCP sur l’instance.</p>{% endif %}
 <div class="actions"><button type="submit">Enregistrer</button><a class="button secondary" href="{% url 'settings' %}">Annuler</a></div></form>
 <p>Le formulaire conserve la saisie manuelle. Une demande reste affichée « en attente » tant que l’agent n’a pas répondu. Une périodicité inconnue ne doit jamais être inventée.</p>
+<p>Si EPI est activé dans Paramètres → Modules, cette activation permet aussi les propositions de validité : type d’EPI, date fabricant et première mise en service sont transmis à l’agent. La date ou durée proposée doit citer sa source ; un gestionnaire l’applique dans EPI → Validités IA. L’agent ne distribue ni ne détruit d’EPI.</p>
+<p>Si Dosimètres est activé dans Paramètres → Modules, l’agent peut aussi préparer les préaffectations et listes de collecte/envoi, et repérer les retards. Ces préparations restent à confirmer par le gestionnaire ; aucun résultat de dose n’est enregistré.</p>
 </section>
 <section class="card"><h2>Serveur MCP intégré</h2><dl><dt>Endpoint</dt><dd><code>{{ endpoint }}</code></dd><dt>Transport</dt><dd>Streamable HTTP</dd><dt>Authentification</dt><dd>Bearer · variable MATOS_MCP_TOKEN configurée côté client</dd><dt>Configuration serveur</dt><dd>{% if mcp_configured %}Identifiant technique configuré{% else %}Serveur fermé : secret technique à configurer{% endif %}</dd></dl>
 <p>Le fichier utilise le schéma de liaison ARCenal. Son utilisation dans Hermès peut nécessiter une adaptation au format de configuration du client. L’export ne contient aucun secret.</p>

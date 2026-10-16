@@ -1,6 +1,17 @@
 from django import forms
 
-from .models import Asset, Brand, Category, DeviceModel, Intervention, License, Site, Supplier, User
+from .models import (
+    Asset,
+    Brand,
+    Category,
+    DeviceModel,
+    Intervention,
+    License,
+    ModuleSettings,
+    Site,
+    Supplier,
+    User,
+)
 from .permissions import sites
 
 
@@ -10,6 +21,12 @@ class DateInput(forms.DateInput):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("format", "%Y-%m-%d")
         super().__init__(*args, **kwargs)
+
+
+class ModuleSettingsForm(forms.ModelForm):
+    class Meta:
+        model = ModuleSettings
+        fields = ["epi_enabled", "dosimeters_enabled"]
 
 
 class AssetForm(forms.ModelForm):
