@@ -9,6 +9,8 @@ test_format = 1.0
     set -x
     """
 
+    test_upgrade_from.b8ef047930d7c64944b83a485c2c8f13dd414794.name = "Mise à jour depuis 0.1.1~ynh5 (catalogue publié)"
+
     [default.curl_tests]
     dashboard.logged_on_sso = true
     dashboard.expect_title = "ARCenal Matos"

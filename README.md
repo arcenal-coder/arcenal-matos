@@ -1,4 +1,4 @@
-# ARCenal Matos · 0.1.1 — preview
+# ARCenal Matos · 0.1.2 — preview
 
 Application web responsive de gestion interne des actifs, Django/PostgreSQL, MCP intégré et liaison YAML pour un agent logisticien créé dans Hermès.
 
@@ -26,7 +26,7 @@ Ouvrir **http://127.0.0.1:8765/**. Choisir un profil fictif sur la page de conne
 
 Le thème **Gratitude amélioré** reprend les références communes ARCenal : crème/ivoire, accent terre cuite et variables CSS sémantiques. Le sélecteur **Apparence** propose Clair, Sombre et Système ; le choix manuel persiste dans ce navigateur. La police Inter et les dépendances du scanner sont servies localement. Navigation compacte, focus clavier, cibles tactiles et tableaux défilants sont intégrés.
 
-La version de l'application et des archives provient de `matos/version.py`. Les manifests JavaScript et YunoHost sont contrôlés pour rester cohérents. Les anciennes archives bêta/RC sont conservées dans `dist/` ; les nouvelles archives portent `0.1.1`.
+La version de l'application et des archives provient de `matos/version.py`. Les manifests JavaScript et YunoHost sont contrôlés pour rester cohérents. Les anciennes archives sont conservées dans `dist/` ; les nouvelles archives portent `0.1.2`.
 
 L'inventaire démarre vide. L'administrateur définit sites et catégories ; un gestionnaire ajoute une fiche ou télécharge le modèle CSV. Le collaborateur demande un prêt ; le gestionnaire le valide puis enregistre sortie et retour. Utiliser l'écran des intégrations comme administrateur pour télécharger le YAML du logisticien.
 
@@ -36,9 +36,11 @@ Pour arrêter le serveur et le worker : `.venv/bin/python scripts/stop_local.py`
 
 ## Capacités de la preview
 
-### Saisie simplifiée en développement
+La candidate 0.1.2 regroupe les évolutions de saisie et Paramètres poussées après 0.1.1. Sa publication corrige aussi la qualification du catalogue ARCenal : YunoHost ne propose pas de mise à jour lorsque le niveau est inférieur à 5, même si `state` vaut `working`. Les preuves techniques ARCenal et le résultat du catalogue communautaire officiel sont distincts ; la qualification 0.1.2 est en cours avant promotion du catalogue.
 
-Le code de travail ajoute un menu **Paramètres** avec Agent & MCP, Gestion des utilisateurs, Sites et Catégories & périodicités. Ces changements sont disponibles dans l'aperçu local ; ils ne font pas encore partie de l'archive immuable v0.1.1 publiée.
+### Saisie simplifiée
+
+La version 0.1.2 ajoute un menu **Paramètres** avec Agent & MCP, Gestion des utilisateurs, Sites et Catégories & périodicités. Ces changements ne font pas partie de l'ancienne archive immuable v0.1.1.
 
 - **Inventaire → Ajouter** : identifiant automatique par type/catégorie et séquence verrouillée ; les clés déjà attribuées restent stables.
 - Catégories, marques et modèles ajoutables sur place. Marques/modèles mémorisés, variantes de casse réutilisées et noms proches proposés pour éviter les erreurs de frappe. Les modèles sont rattachés à leur marque.

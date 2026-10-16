@@ -1,7 +1,16 @@
-# Rapport de contrôle — ARCenal Matos 0.1.1 preview
+# Rapport de contrôle — ARCenal Matos 0.1.2 preview
 
 Statut : distribution preview, SSO/branding de production configurés ; recette réelle de plateforme à effectuer.
-Date : 2026-10-15.
+Date : 2026-10-16.
+
+## Candidate corrective 0.1.2
+
+- Cause prouvée du blocage : catalogue ARCenal avec `level=0`, alors que YunoHost exige un entier >= 5 et `state=working` pour annoncer une mise à jour (`app_upgrade_bad_quality`). Le statut 0 ne signifie pas simplement absence de qualification communautaire : sa publication précédente était incorrecte pour le catalogue client.
+- Les cinq scénarios package_check de 0.1.1~ynh5 avaient réussi ; son niveau officiel restait 0 à cause des contrôles d'inscription/état dans le catalogue officiel YunoHost. Ces messages ne sont pas des échecs d'installation ou de cycle de vie.
+- Préparation de la source immuable 0.1.2 et du paquet 0.1.2~ynh1, incluant les améliorations de saisie et migrations additives 0005/0006.
+- RÉUSSI : 72 tests backend et 19 parcours Chromium sur 0.1.2 ; migration du schéma 0.1.1 vers 0.1.2 avec conservation de la clé, série, champs historiques, références marque/modèle et contenu d'un document privé ; ruff, build scanner et cohérence des migrations.
+- À REVALIDER avant promotion : installation, cycle de vie complet et mise à jour réelle depuis la révision publiée b8ef047930d7c64944b83a485c2c8f13dd414794 ; contrôle du niveau du catalogue pour éviter la régression.
+- Publication source/paquet et correction du catalogue preview explicitement autorisées par le client le 16 octobre 2026.
 
 ## Contrôles locaux
 

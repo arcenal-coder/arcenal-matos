@@ -3,7 +3,7 @@ id = "arcenal-matos"
 name = "ARCenal Matos"
 description.en = "Internal multisite asset management with a logistics MCP server"
 description.fr = "Gestion interne multisite des actifs avec serveur MCP logisticien"
-version = "0.1.1~ynh5"
+version = "0.1.2~ynh1"
 maintainers = ["arcenal-coder"]
 
 [upstream]
