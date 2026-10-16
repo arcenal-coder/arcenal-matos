@@ -1,14 +1,17 @@
 # Rapport de contrôle — ARCenal Matos 0.2.0 preview
 
-Statut : candidate finale 0.2.0, publication preview autorisée ; qualification YunoHost en cours avant promotion.
+Statut : 0.2.0 finalisée, qualifiée et publiée en preview ; recette métier et mise à jour sur le serveur client distinctes.
 Date : 2026-10-16.
 
 ## Finalisation 0.2.0
 
 - Le client confirme « Oui, finaliser et publier » : source immuable, paquet, qualification puis catalogue preview autorisés.
 - Versions application/JavaScript/manifest synchronisées ; notes de version et procédure de sauvegarde/restauration fournies.
-- RÉUSSI sur 0.2.0 : ruff, compilation, Django check/migrations, pip check, 119 tests backend et 25 parcours Chromium, build scanner. Cycle de vie YunoHost et upgrade depuis 0.1.2~ynh1 encore à qualifier avant promotion.
+- RÉUSSI sur 0.2.0 : ruff, compilation, Django check/migrations, pip check, 119 tests backend et 25 parcours Chromium, build scanner ; CI Linux 38885647848, source c782bf8.
 - Tests de paquet enrichis avec le module EPI actif, la page Modules, et le refus d'accès Dosimètres lorsqu'il est inactif initialement.
+- RÉUSSI : package_check 38885952601, paquet 0.2.0~ynh1 figé à 37f06d73a9d2562b26fa0dc07d1447eeedb153e9 ; sept scénarios sur YunoHost 12.1.41.2 amd64, dont upgrades depuis 0.1.1 et 0.1.2.
+- RÉUSSI : 18 tests catalogue, promotion sélective 38887649483, PR #22 fusionnée, publication 38887936074 et flux brut/Pages vérifiés en 0.2.0~ynh1/niveau 5/working. Changement concurrent ARCenal Store conservé ; diff final limité à Matos.
+- Source immuable : https://github.com/arcenal-coder/arcenal-matos/releases/tag/v0.2.0 ; SHA256 8c717f8b984eed15197bc6be3f1cb325f8e795df7d2473b5ed4e57f0e3ebfaab vérifié à distance. Preuve structurée : `arcenal-qualification.json` jointe à la release, résultat officiel original et grade technique ARCenal conservés séparément.
 
 ## Dosimètres passifs et activation des modules
 
@@ -20,7 +23,7 @@ Date : 2026-10-16.
 - RÉUSSI : **25 parcours navigateur**, dont interrupteurs, conservation des références EPI, réception/distribution/collecte/envoi/perte/remplacement, vue personnelle, témoin, assistance en attente et axe clair/ordinateur + sombre/mobile.
 - RÉUSSI : ruff, syntaxe JavaScript, compilation, Django check et cohérence des migrations ; migration locale core.0007 + dosimetry.0001 après sauvegarde, empreintes du matériel et des EPI identiques avant/après ; aucun badge fictif ajouté.
 - Réglages initiaux : EPI actif et Dosimètres inactif, activation réservée à l'administrateur. 23 outils MCP enregistrés, gardes dynamiques sur les fonctions des modules désactivés.
-- NON_EXÉCUTÉ : agent Hermès réel, flux avec un laboratoire réel, recette métier et cycle de vie YunoHost de cette version ; aucune publication automatique du développement.
+- NON_EXÉCUTÉ : agent Hermès réel, flux avec un laboratoire réel et recette métier cliente. Cycle de vie YunoHost qualifié et publication 0.2.0 réalisée après autorisation.
 
 ## Module EPI — développement local vérifié
 
@@ -32,8 +35,8 @@ Date : 2026-10-16.
 - RÉUSSI : **22 scénarios navigateur**, incluant lots/demandes/remise/destruction/prix privés, exemplaires/série/expiration/remise passée, validité manuelle, demande IA en attente et contrôle axe sur les écrans EPI en clair/ordinateur et sombre/mobile.
 - RÉUSSI : ruff, compilation, cohérence des migrations, génération/vérification d'une archive de développement incluant l'app `epi` et sa migration.
 - RÉUSSI : sauvegarde locale avant migration `epi.0001_initial`, migration additive, empreinte d'inventaire général avant/après identique et aucun EPI fictif ajouté. Version distincte 0.2.0-dev.1 pour préserver les archives publiées 0.1.2.
-- NON_EXÉCUTÉ : inférence par un agent Hermès réel, validation des sources fabricant sur les EPI réels du client, recette métier cliente et cycle de vie YunoHost incluant ce nouveau module.
-- Aucune publication GitHub/Store de ce module ni connexion au serveur client dans ce lot ; la version distribuée du catalogue reste 0.1.2~ynh1.
+- NON_EXÉCUTÉ : inférence par un agent Hermès réel, validation des sources fabricant sur les EPI réels du client et recette métier cliente. Cycle de vie incluant EPI qualifié dans 0.2.0.
+- Modules ensuite publiés dans 0.2.0~ynh1 ; aucune connexion au serveur client effectuée.
 
 ## Publication corrective 0.1.2
 
@@ -94,7 +97,7 @@ Date : 2026-10-16.
 
 Les régressions de bêta, y compris coûts décimaux MCP et jeu 300 humains + 1 agent, ont été rejouées dans les 57 tests RC. Aucun test de caméra/NFC physique n'est assimilé à ces contrôles. Le premier contrôle Gratitude a détecté 4,469:1 pour le texte secondaire clair ; teinte corrigée à #5D6C80, puis tests rejoués avec succès.
 
-## Paquet et services réels
+## Historique : paquet et services réels 0.1.2
 
 | Scénario | Résultat | Motif / suite |
 | --- | --- | --- |
@@ -119,7 +122,7 @@ Ouvrir la bêta locale, choisir successivement Administrateur, Gestionnaire et C
 
 La recette cliente, la publication et le déploiement restent des étapes distinctes des contrôles locaux.
 
-## Preuves de distribution
+## Historique : preuves de distribution 0.1.2
 
 - Source immuable : https://github.com/arcenal-coder/arcenal-matos/releases/tag/v0.1.2 ; SHA256 `04dcf13b27f3a998c9aabde98d297ed67df5b2b41155605f6253e327164f0a65`.
 - CI application Linux : https://github.com/arcenal-coder/arcenal-matos/actions/runs/38849521398 (72 tests backend et 19 parcours navigateur).

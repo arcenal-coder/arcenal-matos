@@ -4,7 +4,7 @@ Application web responsive de gestion interne des actifs, Django/PostgreSQL, MCP
 
 Logiciel propriétaire — conditions dans LICENSE. Distribution destinée au canal preview d'ARCenal Store avant qualification sur chaque serveur client.
 
-La version 0.2.0 ajoute les modules EPI et Dosimètres passifs, activables indépendamment. Sa finalisation et sa publication preview sont autorisées par le client ; la qualification de mise à jour depuis **0.1.2~ynh1** est exigée avant promotion. Les nouveautés, premières étapes et procédure de retour arrière sont dans [RELEASE_NOTES.md](RELEASE_NOTES.md).
+La version 0.2.0 est publiée en preview avec les modules EPI et Dosimètres passifs, activables indépendamment. La mise à jour depuis **0.1.2~ynh1** et le cycle de vie YunoHost ont été qualifiés. Les nouveautés, premières étapes et procédure de retour arrière sont dans [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 ## Paramètres → Modules
 
@@ -58,9 +58,9 @@ La V1 n'inclut pas le reconditionnement/retour d'EPI usagés, les transferts int
 
 Paquet : https://github.com/arcenal-coder/arcenal-matos_ynh/tree/preview. L'installation choisit le domaine, le groupe YunoHost autorisé et le compte administrateur ; aucun compte ou mot de passe applicatif à créer. Le processus web utilise un socket Unix réservé à l'application et Nginx, les identités proviennent de SSOwat, les rôles/sites se configurent dans Matos.
 
-Matos est référencé en **preview** dans le catalogue canonique ARCenal : `https://raw.githubusercontent.com/arcenal-coder/arcenal-systeme-catalogue/main/preview`. Paquet figé `0.1.2~ynh1`, révision `3d882348b212835d9adc61c54416ad72a6185c04`, niveau technique ARCenal **5**, état `working`. Publication vérifiée sur le flux brut et son miroir GitHub Pages ; correction catalogue [#16](https://github.com/arcenal-coder/arcenal-systeme-catalogue/pull/16).
+Matos est référencé en **preview** dans le catalogue canonique ARCenal : `https://raw.githubusercontent.com/arcenal-coder/arcenal-systeme-catalogue/main/preview`. Paquet figé `0.2.0~ynh1`, révision `37f06d73a9d2562b26fa0dc07d1447eeedb153e9`, niveau technique ARCenal **5**, état `working`. Publication vérifiée sur le flux brut et son miroir GitHub Pages ; [PR catalogue nº 22](https://github.com/arcenal-coder/arcenal-systeme-catalogue/pull/22).
 
-Si YunoHost affiche encore l'ancien avertissement « défectueuse », actualiser son catalogue d'applications puis rouvrir les mises à jour. Le serveur doit avoir récupéré l'entrée `0.1.2~ynh1` ; le déploiement n'est pas réalisé automatiquement par cette publication.
+Si YunoHost affiche encore une ancienne version ou l'avertissement « défectueuse », actualiser son catalogue d'applications puis rouvrir les mises à jour. Le serveur doit avoir récupéré l'entrée `0.2.0~ynh1` ; le déploiement n'est pas réalisé automatiquement par cette publication.
 
 Le logo est récupéré depuis le portail public YunoHost de l'instance, mis en cache localement et actualisé périodiquement. Le logo ARCenal est conservé si aucun logo d'organisation n'est disponible. La signature « Par ARCenal » apparaît au bas de toutes les pages et des rapports PDF.
 
@@ -88,7 +88,7 @@ Pour arrêter le serveur et le worker : `.venv/bin/python scripts/stop_local.py`
 
 ## Capacités de la preview
 
-La version 0.1.2 regroupe les évolutions de saisie et Paramètres poussées après 0.1.1. Elle corrige aussi la qualification du catalogue ARCenal : YunoHost ne propose pas de mise à jour lorsque le niveau est inférieur à 5, même si `state` vaut `working`. Le niveau technique ARCenal 5 est justifié par les scénarios réussis et l'absence de défaut applicatif du linter ; le résultat communautaire officiel original reste conservé séparément. La [preuve de qualification](https://github.com/arcenal-coder/arcenal-matos/releases/download/v0.1.2/arcenal-qualification.json) détaille les six scénarios, dont la mise à jour depuis 0.1.1~ynh5.
+La version 0.2.0 reprend la saisie simplifiée de 0.1.2 et ajoute les deux modules. Le niveau technique ARCenal 5 est maintenu : YunoHost ne propose pas de mise à jour lorsque le niveau est inférieur à 5. Le résultat communautaire officiel original reste conservé séparément. La [preuve de qualification](https://github.com/arcenal-coder/arcenal-matos/releases/download/v0.2.0/arcenal-qualification.json) détaille les sept scénarios, dont les mises à jour depuis 0.1.1~ynh5 et 0.1.2~ynh1.
 
 ### Saisie simplifiée
 
@@ -153,4 +153,4 @@ Cette commande produit une archive de sources et un **modèle de paquet** dans `
 
 Les états et preuves détaillés de la bêta sont conservés dans `.arcenal/`. Une bêta locale n'est pas une validation du déploiement YunoHost ou Store.
 
-La qualification isolée 0.1.2 est réussie sur YunoHost 12.1.41.2 **amd64** : installation/retrait/réinstallation, connexion SSO réelle et refus anonyme, assets, upgrade même version et depuis 0.1.1~ynh5, sauvegarde/restauration et changement de domaine ([preuve](https://github.com/arcenal-coder/arcenal-matos_ynh/actions/runs/38850600554)). `arm64` est déclaré compatible mais son installation n'a pas été exécutée. Les seuls constats critiques/d'erreur du linter officiel concernent l'inscription et l'état dans son catalogue officiel ; ils ne sont pas présentés comme une note communautaire 5. Le catalogue client ARCenal porte sa qualification technique 5, documentée séparément dans `TEST_REPORT.md`.
+La qualification isolée 0.2.0 est réussie sur YunoHost 12.1.41.2 **amd64** : installation/retrait/réinstallation, connexion SSO réelle et refus anonyme, assets, EPI et Paramètres → Modules, Dosimètres inactif refusé, upgrades même version et depuis 0.1.1/0.1.2, sauvegarde/restauration et changement de domaine ([preuve](https://github.com/arcenal-coder/arcenal-matos_ynh/actions/runs/38885952601)). `arm64` est déclaré compatible mais son installation n'a pas été exécutée. Les seuls constats critiques/d'erreur du linter officiel concernent l'inscription et l'état dans son catalogue officiel ; ils ne sont pas présentés comme une note communautaire 5. Le catalogue client ARCenal porte sa qualification technique 5, documentée séparément dans `TEST_REPORT.md`.

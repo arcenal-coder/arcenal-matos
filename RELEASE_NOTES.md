@@ -21,7 +21,8 @@ Aucune fiche, dotation ou badge fictif n'est ajouté dans une installation YunoH
 ## Qualification et distribution
 
 - Contrôles applicatifs et parcours locaux tracés dans TEST_REPORT.md.
-- La candidate YunoHost est soumise au cycle de vie complet et à la mise à jour depuis 0.1.2~ynh1 avant promotion du catalogue preview.
+- Sept scénarios YunoHost 12.1.41.2 amd64 réussis, dont mises à jour depuis 0.1.1 et 0.1.2, sauvegarde/restauration et changement de domaine : [preuve de qualification](https://github.com/arcenal-coder/arcenal-matos_ynh/actions/runs/38885952601).
+- Version installable `0.2.0~ynh1`, révision `37f06d73a9d2562b26fa0dc07d1447eeedb153e9`, niveau technique ARCenal 5. [Publication catalogue nº 22](https://github.com/arcenal-coder/arcenal-systeme-catalogue/pull/22), flux brut et Pages vérifiés.
 - La publication ne réalise pas la mise à jour sur le serveur client et ne vaut pas recette d'une connexion Hermès, de la délivrance SMTP ou d'un téléphone réel.
 
 ## Sauvegarde et retour arrière
