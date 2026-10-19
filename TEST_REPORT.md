@@ -3,13 +3,17 @@
 Statut : 0.2.0 finalisée, qualifiée et publiée en preview ; recette métier et mise à jour sur le serveur client distinctes.
 Date : 2026-10-16.
 
-## Candidate 0.2.1 / Agent natif 0.22.2~ynh3 — 2026-10-19
+## Publication 0.2.1 / Agent natif 0.22.2~ynh4 — 2026-10-19
 
 - Client autorise le portage sur l’architecture actuelle puis le push des deux paquets GitHub.
 - Base Agent : paquet8324eed / source Hermes d923a5eb ; extension de distribution dans le processus natif, aucun ancien broker ou service de contrôle réinstallé. Ancien prototype D-019 non publié.
 - RÉUSSI : import du vrai dashboard préparé, échange machine200, API native toujours401 sans session, faux Remote-User local401 sans preuve Nginx ; test inter-dépôts passé contre le store natif avec revalidation réelle Matos et transports remplacés seulement.
 - Le cycle d’installation/restauration Nginx/SSOwat sur YunoHost et la recette sur serveur client restent NON_EXÉCUTÉS pour cette nouvelle paire. Publication GitHub distincte du déploiement ; aucun accès au serveur client.
-- Versions : Matos0.2.1, paquet0.2.1~ynh1 et Agent0.22.2~ynh3. Archives0.2.0 préservées ; migrations additives et sauvegarde/restauration complète pour le retour arrière.
+- Versions : Matos0.2.1, paquet0.2.1~ynh1 et Agent0.22.2~ynh4. Archives0.2.0 préservées ; migrations additives et sauvegarde/restauration complète pour le retour arrière.
+- RÉUSSI : CI source39252714353 (130 backend,26 Chromium, lint/build/archives) ; CI native39253226761 (Python3.14.7,41 tests réussis et2 tests frontend ignorés faute de build dans ce contrôle).
+- Publié : sourcev0.2.1/e9d6426, paquetMatos76309ed/tagv0.2.1-ynh1-preview ; Agentf46106f/tagv0.22.2-ynh4-preview. SourceSHA2566463ad8b89001a8b9f4a0d988ca6cb89c8bb22835be1f4a59e095a2fb8c3e59e vérifié par métadonnées GitHub et manifest distant.
+- La CI native initiale a isolé le parseur système YunoHost du runtime Hermes ; import différé et connexions SQLite explicitement fermées. Premier tag~ynh3 conservé comme candidate écartée, aucun tag/asset réécrit.
+- Qualification YunoHost Matos lancée : https://github.com/arcenal-coder/arcenal-matos_ynh/actions/runs/39253219657 ; résultat non déclaré réussi avant achèvement. Aucune qualification réelle du paquet Agent ni installation sur le serveur client dans cette session.
 
 ## Ajout local D-019 : appariement bilatéral d’assistance (2026-10-19)
 

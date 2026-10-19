@@ -2,7 +2,7 @@
 
 ## Liaison d’assistance avec ARCenal Agent
 
-- Appariement sur le même serveur YunoHost avec **ARCenal Agent 0.22.2~ynh3**.
+- Appariement sur le même serveur YunoHost avec **ARCenal Agent 0.22.2~ynh4**.
 - Adresses et identifiants techniques préparés automatiquement par les paquets.
 - Confirmation dans Matos, validation administrateur dans l’Agent, puis état
   **Liaison active** uniquement après vérification. Révocation dans chaque app.
@@ -15,7 +15,7 @@
 
 ## Installation et première utilisation
 
-1. Mettre à jour ARCenal Agent avec son paquet preview **0.22.2~ynh3**.
+1. Mettre à jour ARCenal Agent avec son paquet preview **0.22.2~ynh4**.
 2. Mettre à jour Matos avec le paquet preview **0.2.1~ynh1**.
 3. Dans Matos → Paramètres → Agent & MCP, confirmer la lecture seule et cliquer
    **Lier ARCenal Agent** ; valider dans l’Agent puis **Vérifier la liaison**.
