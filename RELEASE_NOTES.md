@@ -1,32 +1,36 @@
-# ARCenal Matos 0.2.0 — preview
+# ARCenal Matos 0.2.1 — preview
 
-## Contenu
+## Liaison d’assistance avec ARCenal Agent
 
-- Inventaire multisite, prêts, transferts, maintenances, imports et rapports conservés.
-- Module **EPI** séparé : quantités/lots ou exemplaires, validités fabricant/première mise en service, demandes et remises partielles, dotations, destructions, coûts HT historiques réservés aux gestionnaires et administrateurs.
-- Module **Dosimètres passifs** séparé : périodes/laboratoires, badges personnels et témoins, préaffectations, distribution, collecte, retours non portés, envois, pertes et remplacements. Aucun résultat de dose ; les appareils opérationnels restent dans le matériel général.
-- **Paramètres → Modules** : activation indépendante, conservation des données, blocage réel des vues, opérations, rappels et fonctions MCP quand le module est désactivé.
-- Agent IA via le MCP existant : propositions de validité EPI et préparations logistiques des badges. Les décisions de validation et les opérations physiques restent humaines.
-- Comptes humains LDAP/SSO YunoHost, logo société transparent au-dessus du nom de l'application, thèmes clair/sombre/système et signature en pied de page.
+- Appariement sur le même serveur YunoHost avec **ARCenal Agent 0.22.2~ynh3**.
+- Adresses et identifiants techniques préparés automatiquement par les paquets.
+- Confirmation dans Matos, validation administrateur dans l’Agent, puis état
+  **Liaison active** uniquement après vérification. Révocation dans chaque app.
+- Bouton accessible **Demander à ARCenal Agent** dans Matériel, EPI et Dosimètres.
+- Référence opaque à usage unique (60 secondes), identité SSO concordante et
+  droits/rôle/module revérifiés dans Matos à réception.
+- Assistance strictement en lecture seule, sans fiche ni document transmis.
+  L’accueil valide le contexte ; il ne lance pas de conversation IA.
+- Les fonctionnalités EPI, Dosimètres et MCP de 0.2.0 restent disponibles.
 
-## Première utilisation après mise à jour
+## Installation et première utilisation
 
-1. Les rôles et sites existants sont conservés. L'administrateur vérifie les utilisateurs dans Paramètres.
-2. EPI reste actif par défaut. Pour les dosimètres, ouvrir **Paramètres → Modules**, activer Dosimètres passifs et enregistrer.
-3. Configurer les références EPI puis les réceptions ; pour les badges, configurer le laboratoire et la période avant réception/distribution.
-4. Pour l'assistance, activer **Agent & MCP** et connecter l'agent avec le YAML actualisé et son secret privé configuré séparément. Activer une option ne lance pas un agent à elle seule.
+1. Mettre à jour ARCenal Agent avec son paquet preview **0.22.2~ynh3**.
+2. Mettre à jour Matos avec le paquet preview **0.2.1~ynh1**.
+3. Dans Matos → Paramètres → Agent & MCP, confirmer la lecture seule et cliquer
+   **Lier ARCenal Agent** ; valider dans l’Agent puis **Vérifier la liaison**.
 
-Aucune fiche, dotation ou badge fictif n'est ajouté dans une installation YunoHost.
+L’identifiant YunoHost de l’Agent reste `arcenal`. Le dashboard natif Hermes,
+ses configurations et conversations sont conservés. Aucun ancien broker ou
+service d’administration ARC n’est réinstallé.
 
-## Qualification et distribution
+## Vérification et retour arrière
 
-- Contrôles applicatifs et parcours locaux tracés dans TEST_REPORT.md.
-- Sept scénarios YunoHost 12.1.41.2 amd64 réussis, dont mises à jour depuis 0.1.1 et 0.1.2, sauvegarde/restauration et changement de domaine : [preuve de qualification](https://github.com/arcenal-coder/arcenal-matos_ynh/actions/runs/38885952601).
-- Version installable `0.2.0~ynh1`, révision `37f06d73a9d2562b26fa0dc07d1447eeedb153e9`, niveau technique ARCenal 5. [Publication catalogue nº 22](https://github.com/arcenal-coder/arcenal-systeme-catalogue/pull/22), flux brut et Pages vérifiés.
-- La publication ne réalise pas la mise à jour sur le serveur client et ne vaut pas recette d'une connexion Hermès, de la délivrance SMTP ou d'un téléphone réel.
+Contrôles et limites dans `TEST_REPORT.md`. Les essais locaux et CI ne valent pas
+recette du serveur client. La publication ne réalise aucun déploiement.
 
-## Sauvegarde et retour arrière
+Créer une sauvegarde YunoHost complète avant les mises à jour. En cas de retour
+arrière, restaurer la sauvegarde avec le code, la base, les médias et la
+configuration correspondants. Les migrations 0008/0009 sont additives.
 
-Conserver une sauvegarde YunoHost complète de la version installée avant la mise à jour, avec base de données, médias et configuration. Les nouvelles migrations sont additives, mais un retour arrière consiste à **restaurer cette sauvegarde complète avec la version précédente** ; changer seulement de révision Git ne restaure pas l'état métier et son schéma.
-
-Les archives précédemment publiées ne sont ni écrasées ni remplacées. Les données des modules restent conservées lorsqu'ils sont simplement désactivés.
+Les archives 0.2.0 et antérieures restent immuables.

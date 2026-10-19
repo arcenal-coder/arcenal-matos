@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import intake, views
+from . import agent_pairing_views, intake, views
 
 urlpatterns = [
     path("branding/logo/", views.company_logo, name="company-logo"),
@@ -32,4 +32,7 @@ urlpatterns = [
     path("documents/<uuid:pk>/", views.download_document, name="document"), path("scan/", views.scan, name="scan"),
     path("notifications/", views.notifications, name="notifications"), path("journal/", views.journal, name="journal"),
     path("integration/", views.integration, name="integration"),
+    path("integration/pairing/", agent_pairing_views.pairing, name="agent-pairing"),
+    path("integration/assistance/verify/", agent_pairing_views.verify, name="agent-assistance-verify"),
+    path("integration/assistance/<slug:agent>/", views.agent_assistance, name="agent-assistance"),
 ]

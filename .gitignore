@@ -6,6 +6,7 @@
 __pycache__/
 *.py[cod]
 .env
+.assistance.json
 !packaging/ynh/conf/.env
 media/
 staticfiles/

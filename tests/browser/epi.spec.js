@@ -104,6 +104,7 @@ test('EPI individuel : série, validité expirée, remise passée et demande IA 
   await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
   await expect(page).toHaveURL(lotUrl);
   await page.goto('/integration/');
+  await page.getByText('Configuration MCP existante (technique)', { exact: true }).click();
   await page.getByLabel('Activer l’assistance à la saisie par l’agent MCP').check();
   await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
   await page.goto(lotUrl);

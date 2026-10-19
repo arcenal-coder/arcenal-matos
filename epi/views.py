@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from core.agent_links import destination as assistance_destination
 from core.intake import assistance_enabled
 from core.modules import enabled
 from core.permissions import require, sites
@@ -42,7 +43,8 @@ def is_staff(user):
 
 
 def page(request, template, section, **context):
-    return render(request, f"epi/{template}.html", {"epi_page": section, "epi_staff": is_staff(request.user), **context})
+    return render(request, f"epi/{template}.html", {"epi_page": section, "epi_staff": is_staff(request.user),
+        "agent_sso_ready": bool(assistance_destination()), **context})
 
 
 def lots(user):

@@ -1,7 +1,9 @@
 from django import forms
 
+from .agent_links import validate_destination
 from .models import (
     Asset,
+    AssistanceSettings,
     Brand,
     Category,
     DeviceModel,
@@ -27,6 +29,16 @@ class ModuleSettingsForm(forms.ModelForm):
     class Meta:
         model = ModuleSettings
         fields = ["epi_enabled", "dosimeters_enabled"]
+
+
+class AgentSSOForm(forms.ModelForm):
+    class Meta:
+        model = AssistanceSettings
+        fields = ["sso_url"]
+        help_texts = {"sso_url": "Chemin public du service s’il est publié sous le même domaine, sinon son URL HTTPS. Sans paramètre ni identifiant. Localhost désigne le poste de l’utilisateur dans son navigateur."}
+
+    def clean_sso_url(self):
+        return validate_destination(self.cleaned_data["sso_url"])
 
 
 class AssetForm(forms.ModelForm):

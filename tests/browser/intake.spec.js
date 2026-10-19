@@ -73,6 +73,7 @@ test('Paramètres et assistance conditionnelle : attente puis réponse dans le f
   expect(brandLayout.bottom).toBeLessThanOrEqual(brandLayout.titleTop);
   expect(brandLayout.background).toBe('rgba(0, 0, 0, 0)');
   await page.goto('/integration/');
+  await page.getByText('Configuration MCP existante (technique)', { exact: true }).click();
   await page.getByLabel('Activer l’assistance à la saisie par l’agent MCP').check();
   await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
   await page.goto('/assets/new/');

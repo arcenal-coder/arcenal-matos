@@ -93,6 +93,8 @@ class DeviceModel(models.Model):
 
 class AssistanceSettings(models.Model):
     enabled = models.BooleanField("Activer l’assistance à la saisie par l’agent MCP", default=False)
+    sso_url = models.CharField("Entrée publique SSO d’ARCenal Agent", max_length=500, blank=True)
+    pair_id = models.CharField(max_length=43, blank=True, editable=False)
 
 
 class ModuleSettings(models.Model):
@@ -313,6 +315,11 @@ class Event(models.Model):
             "site.saved": "Site enregistré", "category.saved": "Catégorie enregistrée", "user.saved": "Profil attribué",
             "supplier.saved": "Fournisseur enregistré",
             "modules.configured": "Activation des modules modifiée",
+            "agent.link_exported": "Liaison d’un agent exportée",
+            "agent.assistance_opened": "Assistance ARCenal Agent ouverte (lecture seule)",
+            "agent.sso_configured": "Destination SSO de l’assistance enregistrée",
+            "agent.pairing_requested": "Liaison d’assistance demandée",
+            "agent.pairing_revoked": "Liaison d’assistance révoquée",
         }
         return labels.get(self.action, self.action)
 

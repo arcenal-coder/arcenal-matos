@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from core.agent_links import destination as assistance_destination
 from core.intake import assistance_enabled
 from core.modules import enabled
 from core.permissions import require, sites
@@ -45,7 +46,8 @@ def tasks(user):
 
 
 def page(request, template, section, **context):
-    return render(request, f"dosimetry/{template}.html", {"dosimetry_page": section, "dosimetry_staff": staff(request.user), **context})
+    return render(request, f"dosimetry/{template}.html", {"dosimetry_page": section, "dosimetry_staff": staff(request.user),
+        "agent_sso_ready": bool(assistance_destination()), **context})
 
 
 def form_page(request, title, form, section, cancel, **context):

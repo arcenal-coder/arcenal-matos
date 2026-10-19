@@ -1,7 +1,37 @@
-# Rapport de contrôle — ARCenal Matos 0.2.0 preview
+# Rapport de contrôle — ARCenal Matos 0.2.1 preview
 
 Statut : 0.2.0 finalisée, qualifiée et publiée en preview ; recette métier et mise à jour sur le serveur client distinctes.
 Date : 2026-10-16.
+
+## Candidate 0.2.1 / Agent natif 0.22.2~ynh3 — 2026-10-19
+
+- Client autorise le portage sur l’architecture actuelle puis le push des deux paquets GitHub.
+- Base Agent : paquet8324eed / source Hermes d923a5eb ; extension de distribution dans le processus natif, aucun ancien broker ou service de contrôle réinstallé. Ancien prototype D-019 non publié.
+- RÉUSSI : import du vrai dashboard préparé, échange machine200, API native toujours401 sans session, faux Remote-User local401 sans preuve Nginx ; test inter-dépôts passé contre le store natif avec revalidation réelle Matos et transports remplacés seulement.
+- Le cycle d’installation/restauration Nginx/SSOwat sur YunoHost et la recette sur serveur client restent NON_EXÉCUTÉS pour cette nouvelle paire. Publication GitHub distincte du déploiement ; aucun accès au serveur client.
+- Versions : Matos0.2.1, paquet0.2.1~ynh1 et Agent0.22.2~ynh3. Archives0.2.0 préservées ; migrations additives et sauvegarde/restauration complète pour le retour arrière.
+
+## Ajout local D-019 : appariement bilatéral d’assistance (2026-10-19)
+
+- Autorisation explicite de développer aussi la partie centrale ARCenal Agent ; qualification conservée : assistance SSO, sans écriture métier.
+- RÉUSSI : 130 tests Matos et 26 parcours Chromium, 281 tests ARCenal Agent, 24 tests Python du paquet central (dont 4 de provisionnement) et un test inter-dépôts (implémentations réelles, transports HTTP remplacés). Ruff, compilation, check/migrations, manifestes TOML et syntaxe Bash réussis.
+- Contrat central réel dans `arcenal-supervisor/assistance.py` / `assistance_api.py`, monté dans le processus de contrôle existant ; aucune modification du cœur Hermes, aucun nouveau service ou dépendance.
+- Confirmation Matos, accord SSO administrateur Agent à usage unique, état revérifié, expiration et révocation ; référence opaque 60 s/usage unique et revalidation des droits/rôle/module à réception.
+- Provisionnement des adresses/clés par les deux paquets, sans saisie technique ; clé privée ignorée par Git. Revue indépendante : deux défauts de restauration identifiés puis corrigés (reprovisionnement tardif et permissions du secret).
+- NON_VÉRIFIÉ : nouveau cycle des deux paquets sur YunoHost, réseau HTTPS/SSOwat réels, recette sur serveur client. L’accueil de réception n’exécute pas d’inférence IA et ne donne pas accès au chat administratif. Aucun déploiement, publication ou nouvelle archive.
+- Aperçu local redémarré après sauvegarde et migration0009 ; smoke HTTP/YAML/PDF/MCP23 réussi. Aucun accord central fictif ni clé applicative injecté dans l’aperçu.
+
+## Historique D-018 : assistance SSO manuelle, sans écriture (après publication)
+
+- Qualification explicite : « Assistance SSO, sans écriture ». Destination réelle non fournie ; cohébergement indiqué par le client. Réglage public HTTPS ou chemin relatif, sans localhost navigateur ou point d'entrée inventé.
+- RÉUSSI : **126 tests backend et 26 parcours Chromium** ; contrôle exactement nommé « Demander à ARCenal Agent », droits humains/modules, contexte minimal dérivé de la session serveur et absence de données métier en URL.
+- RÉUSSI : refus des contextes falsifiés, références/expirations/action/identité/redirection fournies par le client ; session expirée ou CSRF absent refusés ; aucune action centrale transmise ni donnée de stock modifiée.
+- RÉUSSI : adresses avec identifiants/paramètres/fragments/encodages/localhost refusées, valeur rejetée non réaffichée, audit sans adresse/nom/contenu sensible ; fenêtre isolée et requête finale GET sans référent ni query.
+- RÉUSSI : configuration SSO indépendante du réglage MCP historique, ancien YAML global conservé dans un volet technique replié ; aucun MCP, token, webhook ou API centrale supplémentaire.
+- RÉUSSI : ruff, compilation, check/migrations et diff ; migration additive core.0008 pour l'adresse publique, sauvegarde locale et redémarrage de l'aperçu.
+- Les tests de navigateur ciblent une URL isolée non implémentée (404 attendue) pour vérifier navigation, URL et isolation, pas un fournisseur SSO réel. Aucune référence opaque ni transfert de contexte n'est émis faute de contrat de réception vérifié.
+- NON_VÉRIFIÉ : adresse et SSO réels du destinataire, contrôle de ses droits à réception, intégration bout en bout. Tout connecteur central d'actions reste absent/non autorisé ; une future écriture exigera contrat réel et confirmation dans Matos.
+- Modifications locales non publiées ; exports dédiés D-017 remplacés, composants historiques 0.2.0 non utilisés pour cette assistance.
 
 ## Finalisation 0.2.0
 

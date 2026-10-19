@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -22,7 +22,7 @@ from reportlab.graphics.barcode import createBarcodeDrawing
 
 from matos.version import RELEASE_LABEL, VERSION
 
-from . import branding, forms, modules, services
+from . import agent_links, branding, forms, modules, services
 from .import_export import HEADERS, csv_bytes, import_csv, report
 from .models import (
     Allocation,
@@ -60,6 +60,7 @@ def context(request):
         return data
     preferences = modules.preferences()
     return data | {"unread": Notification.objects.filter(user=request.user, read_at__isnull=True).count(),
+                   "is_assistance_user": request.user.role in ("admin", "manager", "member"),
                    "is_epi_user": request.user.role in ("admin", "manager", "member") and preferences.epi_enabled,
                    "is_dosimeter_user": request.user.role in ("admin", "manager", "member") and preferences.dosimeters_enabled,
                    "is_staff_profile": request.user.role in ("admin", "manager"),
@@ -161,6 +162,7 @@ def inventory(request):
     from django.core.paginator import Paginator
     page = Paginator(queryset, 40).get_page(request.GET.get("page"))
     return render(request, "inventory.html", {"items": page, "sites": sites(request.user),
+                                               "agent_sso_ready": bool(agent_links.destination()),
                                                "intersite": intersite, "start": start, "end": end})
 
 
@@ -639,15 +641,62 @@ def agent_yaml():
 
 
 @login_required
+@require_POST
+def agent_assistance(request, agent):
+    # No user-supplied context, action, reference, target or identity is trusted.
+    if request.GET or set(request.POST) - {"csrfmiddlewaretoken"}:
+        return HttpResponse("Cette liaison est réservée à l’assistance en lecture seule ; aucun contexte client ou action centrale n’est accepté.", status=400)
+    try:
+        context = agent_links.context_for(request.user, agent)
+    except KeyError:
+        raise Http404("Assistance inconnue ou module désactivé.") from None
+    from . import agent_pairing
+    if agent_pairing.configuration():
+        try:
+            target = agent_pairing.open_assistance(request.user, agent)
+        except agent_pairing.PairingUnavailable as exc:
+            return HttpResponse(str(exc), status=409)
+    else:
+        target = agent_links.destination()
+    if not target:
+        return HttpResponse("Activez la liaison d’assistance dans Paramètres → Agent & MCP.", status=409)
+    # Business context stays server-side; only the verified opaque reference may leave.
+    services.audit(request.user, "agent.assistance_opened", details={"application": context.application,
+        "intention": context.intention, "resource_type": context.resource_type, "module": context.resource_id,
+        "delivery": "server_verified_reference" if agent_pairing.configuration() else "sso_navigation_without_context"})
+    response = HttpResponseRedirect(target, status=303)
+    response["Cache-Control"] = "private, no-store"
+    response["Referrer-Policy"] = "no-referrer"
+    return response
+
+
+@login_required
 def integration(request):
+    from . import agent_pairing
     require(request.user, ("admin",))
+    config = AssistanceSettings.objects.filter(pk=1).first() or AssistanceSettings(pk=1)
+    sso_form = forms.AgentSSOForm(instance=config)
     if request.method == "POST":
-        config, _ = AssistanceSettings.objects.get_or_create(pk=1)
-        config.enabled = bool(settings.MCP_TOKEN) and request.POST.get("assistance_enabled") == "on"
-        config.save()
-        services.audit(request.user, "agent.assistance_configured", details={"enabled": config.enabled})
-        messages.success(request, "Paramètres de l’agent enregistrés.")
-        return redirect("integration")
+        kind = request.POST.get("form", "mcp")
+        if kind == "sso":
+            sso_form = forms.AgentSSOForm(request.POST, instance=config)
+            if sso_form.is_valid():
+                config, _ = AssistanceSettings.objects.update_or_create(pk=1, defaults={"sso_url": sso_form.cleaned_data["sso_url"]})
+                services.audit(request.user, "agent.sso_configured", details={"configured": bool(config.sso_url)})
+                messages.success(request, "Destination SSO de l’assistance enregistrée.")
+                return redirect("integration")
+            # Do not echo a rejected destination that might contain credentials.
+            sso_form.data = sso_form.data.copy()
+            sso_form.data["sso_url"] = ""
+        elif kind == "mcp":
+            config, _ = AssistanceSettings.objects.get_or_create(pk=1)
+            config.enabled = bool(settings.MCP_TOKEN) and request.POST.get("assistance_enabled") == "on"
+            config.save(update_fields=["enabled"])
+            services.audit(request.user, "agent.assistance_configured", details={"enabled": config.enabled})
+            messages.success(request, "Paramètres de l’agent enregistrés.")
+            return redirect("integration")
+        else:
+            return HttpResponse("Formulaire inconnu.", status=400)
     data = agent_yaml()
     if request.GET.get("download"):
         services.audit(request.user, "agent.yaml_exported")
@@ -655,5 +704,9 @@ def integration(request):
         response["Content-Disposition"] = 'attachment; filename="arcenal-matos-logisticien.yaml"'
         return response
     return render(request, "integration.html", {"yaml": yaml.safe_dump(data, sort_keys=False, allow_unicode=True),
+        "agent_cards": agent_links.agent_cards(),
+        "pairing_state": agent_pairing.status(),
+        "pairing_manage_url": agent_pairing.management_url(),
+        "sso_form": sso_form,
         "endpoint": data["mcp"]["endpoint"], "mcp_configured": bool(settings.MCP_TOKEN),
         "assistance_enabled": AssistanceSettings.objects.filter(pk=1, enabled=True).exists()})

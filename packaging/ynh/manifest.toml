@@ -3,7 +3,7 @@ id = "arcenal-matos"
 name = "ARCenal Matos"
 description.en = "Internal multisite asset management with a logistics MCP server"
 description.fr = "Gestion interne multisite des actifs avec serveur MCP logisticien"
-version = "0.2.0~ynh1"
+version = "0.2.1~ynh1"
 maintainers = ["arcenal-coder"]
 
 [upstream]
@@ -52,3 +52,8 @@ ram.runtime = "500M"
   mcp.show_tile = false
   mcp.auth_header = false
   mcp.protected = true
+  assistance_verify.url = "/integration/assistance/verify/"
+  assistance_verify.allowed = "visitors"
+  assistance_verify.show_tile = false
+  assistance_verify.auth_header = false
+  assistance_verify.protected = true

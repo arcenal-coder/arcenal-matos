@@ -117,6 +117,7 @@ test('assistant logistique en attente et interfaces accessibles ordinateur/mobil
   await expect(page.locator('#id_recipient')).toHaveCount(0);
   await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
   await page.goto('/integration/');
+  await page.getByText('Configuration MCP existante (technique)', { exact: true }).click();
   await page.getByLabel('Activer l’assistance à la saisie par l’agent MCP').check();
   await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
   await page.goto('/dosimeters/assistance/');

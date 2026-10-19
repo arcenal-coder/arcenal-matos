@@ -88,6 +88,7 @@ test('modèle CSV, import atomique et rapports PDF/CSV', async ({ page }) => {
 test('administrateur : export YAML sans secret et écrans de configuration', async ({ page }) => {
   await login(page, "Administrateur d'essai — Administrateur");
   await page.goto('/integration/');
+  await page.getByText('Configuration MCP existante (technique)', { exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Agent & MCP' })).toBeVisible();
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Télécharger le YAML' }).click();

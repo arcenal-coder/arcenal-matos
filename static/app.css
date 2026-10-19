@@ -185,6 +185,7 @@ button:disabled { cursor: not-allowed; opacity: .65; }
 .ghost:hover { background: var(--arc-surface-secondary); color: var(--arc-text); }
 .actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 24px 0 32px; }
 .actions form { margin: 0; }
+.agent-link-card + .agent-link-card { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--arc-border); }
 .module-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 24px; padding-bottom: 16px; border-bottom: 1px solid var(--arc-border); }
 .module-tabs a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border-radius: 10px; }
 .module-tabs a[aria-current='page'] { background: var(--arc-primary); color: var(--arc-primary-text); font-weight: 700; }

@@ -113,11 +113,25 @@ Le formulaire attend la réponse et recopie série/périodicité sans remplacer 
 - Notifications internes, rappels dédupliqués et file d'envoi e-mail ; validation humaine des demandes fournisseur.
 - Journal distinguant humains et agent, MCP Streamable HTTP authentifié et commandes d'agent idempotentes.
 
-## Connexion MCP
+## Assistance ARCenal Agent par SSO — ajout local après 0.2.0
+
+Demande qualifiée par le client : **assistance SSO, sans écriture**, selon la skill `arcenal-agent-link`. Les nouveaux exports dédiés non publiés ont été remplacés par le bouton accessible exactement nommé **Demander à ARCenal Agent**, dans l'inventaire, les modules EPI/Dosimètres et Paramètres → Agent & MCP.
+
+L'appariement automatique est développé côté Matos **0.2.1** et dans le paquet natif ARCenal Agent **0.22.2~ynh3**. Il conserve le dashboard Hermes actuel et ne réinstalle aucun ancien broker/service de contrôle. Les deux paquets compatibles préparent côté serveur les adresses publiées YunoHost et un secret applicatif dédié ; aucune adresse ni clé à copier. Dans **Paramètres → Agent & MCP**, confirmer la lecture seule et cliquer **Lier ARCenal Agent**, valider dans l'Agent, puis revenir sur **Vérifier la liaison**. **Liaison active** n'apparaît qu'après vérification centrale et accord local. Une indisponibilité ne vaut jamais validation. L'accord expire après 90 jours et peut être révoqué dans chaque application. L'ancien réglage SSO manuel reste dans un volet technique séparé.
+
+Le POST Matos contrôle session, rôle et activation du module. Le contrat central d'assistance v1 fournit une référence aléatoire à usage unique, valable 60 secondes. Le navigateur ne transporte que cette référence. À réception, l'Agent exige la même identité SSO, une liaison active et une revalidation serveur des droits/rôle/module auprès de Matos. Le contexte minimal (application, utilisateur SSO, intention lecture seule, module) circule exclusivement entre serveurs, sans fiche ou document. L'accueil confirme le contexte autorisé ; aucune inférence IA ou connexion du chat administratif n'est revendiquée.
+
+L'ouverture se fait dans une fenêtre isolée, sans référent vers le destinataire ; le journal ne conserve que les catégories techniques de demande. Les contextes/actions fournis par le navigateur sont refusés. Les modules désactivés restent bloqués, y compris entre émission et réception. Aucun connecteur central d'actions ni MCP supplémentaire n'est créé. Le nouveau service et le secret applicatif servent uniquement au contrat d'assistance vérifié localement. Une future intégration d'écriture exige un connecteur central réellement disponible et une confirmation humaine dans Matos avant chaque envoi.
+
+Cette candidate preview ne modifie aucune archive de release existante. Les nouveaux paquets, leur SSOwat et leur cycle de vie restent à qualifier sur une instance YunoHost jetable. Test inter-dépôts : `.venv/bin/python scripts/verify_agent_pairing.py <répertoire-paquet-natif-ARCenal-Agent>` ; seuls les transports HTTP y sont remplacés, pas les implémentations ni la revalidation.
+
+### Configuration MCP préexistante de 0.2.0
+
+La configuration publiée avant cette qualification est conservée dans le volet technique replié **Configuration MCP existante**. Elle n'est pas utilisée par le bouton SSO et n'est pas présentée comme un connecteur central vérifié.
 
 Endpoint : `/mcp`. SDK MCP **1.30.0**, révision **2025-11-25**. Fournir `Authorization: Bearer <valeur privée MATOS_MCP_TOKEN>` à chaque requête. Sans configuration, le serveur MCP est fermé. L'export YAML ne contient pas cette valeur et ne modifie pas les droits serveur.
 
-Le schéma `arcenal-agent-link` décrit profil, endpoint, transport, référence d'authentification et missions. Il sert à configurer le profil dédié ; l'import automatique natif dans Hermès et sa connexion réelle restent à vérifier. Un client MCP officiel est utilisé dans les tests.
+Le YAML technique historique décrit profil, endpoint, transport, référence d'authentification et missions. Son import natif et sa connexion réelle restent à vérifier. Ce contrat historique est distinct du nouveau lien d'assistance SSO ; un client MCP officiel est utilisé dans les tests des fonctions déjà publiées.
 
 L'agent peut gérer fiches/affectations, sorties après validation humaine, retours, transferts, interventions, brouillons fournisseur, rappels et rapports. Les validations de réservations et de demandes fournisseur, ainsi que les remises en service, restent humaines.
 
